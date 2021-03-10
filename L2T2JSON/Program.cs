@@ -23,13 +23,30 @@ namespace L2T2JSON
             //Console.WriteLine(parseJson);
             //Console.ReadKey();
 
-            //Посчитайте суммарную численность по этим странам
-            var sumPopulations =  parseJson.Select(x=> (int)x[""]);
+            Console.WriteLine(parseJson[2]);
+            Console.ReadKey();
 
+
+            //Посчитайте суммарную численность по этим странам
+            var sumPopulations =  parseJson.Select(x=> (int)x["population"]).Sum();
+            Console.WriteLine(sumPopulations);
+            Console.ReadKey();
 
             //Получите перечень всех валют из файла
+            var currencies = parseJson
+                .Select(x => x["currencies"])
+                .Children()
+                .Select(x => (string)x["name"])
+                .OrderBy(x => x)
+                .ToArray();
 
 
+            foreach (var currency in currencies)
+            {
+                Console.WriteLine(currency);
+            }
+
+            Console.ReadKey();
         }
     }
 }
