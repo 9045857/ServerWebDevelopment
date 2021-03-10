@@ -15,9 +15,9 @@ namespace L2T2JSON
             var parseJson = JArray.Parse(downloadJson);
 
             //Посчитайте суммарную численность по этим странам
-            var sumPopulations = parseJson.Select(x => (int)x["population"]).Sum();
+            var totalPopulation = parseJson.Select(x => (int)x["population"]).Sum();
 
-            Console.WriteLine($"Суммарная численность насления стран: {sumPopulations}.");
+            Console.WriteLine($"Суммарная численность насления стран: {totalPopulation}.");
             Console.WriteLine();
 
             //Получите перечень всех валют из файла
@@ -28,7 +28,7 @@ namespace L2T2JSON
                 .OrderBy(x => x)
                 .ToArray();
 
-            Console.WriteLine($"Перечень валют стран в алфовитном порядке");
+            Console.WriteLine($"Перечень валют стран в алфовитном порядке:");
             foreach (var currency in currencies)
             {
                 Console.WriteLine(currency);
