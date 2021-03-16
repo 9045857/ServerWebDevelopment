@@ -1,10 +1,12 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Drawing;
 using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using OfficeOpenXml;
+using OfficeOpenXml.Style;
 
 namespace L2T1Excel
 {
@@ -25,6 +27,21 @@ namespace L2T1Excel
             };
 
             CreateXlsx(people);
+        }
+
+        private static void SetTitleStyle(ExcelRange excelRange)
+        {
+                excelRange.Style.Border.Bottom.Style = ExcelBorderStyle.Thick;
+
+                excelRange.Style.Fill.PatternType = ExcelFillStyle.Solid;
+                excelRange.Style.Fill.BackgroundColor.SetColor(Color.LightYellow);
+           
+                excelRange.Style.HorizontalAlignment = ExcelHorizontalAlignment.Center;
+                excelRange.Style.VerticalAlignment = ExcelVerticalAlignment.Center;
+                excelRange.Style.Font.Bold = true;
+
+                excelRange.Style.Font.Color.SetColor(ColorTranslator.FromHtml("#be0006"));
+           
         }
 
         private static void CreateXlsx(List<Person> people)
@@ -50,20 +67,27 @@ namespace L2T1Excel
                 const int phoneColumn = 4;
                 var row = 1;
 
-                worksheet.Cells[row, nameColumn].Value = "Имя";
-                worksheet.Cells[row, surnameColumn].Value = "Фамилия";
-                worksheet.Cells[row, ageColumn].Value = "Возраст";
-                worksheet.Cells[row, phoneColumn].Value = "Телефон";
+                var title = worksheet.Cells[row, nameColumn, row, phoneColumn];
 
-                foreach (var person in people)
+                title.LoadFromArrays(new object[][]
                 {
-                    row++;
+                        new[] { "Имя", "Фамилия", "Возраст", "Телефон" }
+                });
 
-                    worksheet.Cells[row, nameColumn].Value = person.Name;
-                    worksheet.Cells[row, surnameColumn].Value = person.Surname;
-                    worksheet.Cells[row, ageColumn].Value = person.Age;
-                    worksheet.Cells[row, phoneColumn].Value = person.PhoneNumber;
-                }
+                SetTitleStyle(title);
+
+                SetPeopleTable(people, row, worksheet, nameColumn, surnameColumn, ageColumn, phoneColumn);
+
+                //var cell = worksheet.Cells["E1"];
+                //cell.Style.Font.Name = "Calibri";
+                //cell.Style.Font.Size = 11;
+                //cell.Style.Fill.BackgroundColor.SetColor(ColorTranslator.FromHtml("#ffc7ce"));
+                //cell.Style.Fill.PatternType = ExcelFillStyle.Solid;
+                //cell.Font.Color.SetColor(ColorTranslator.FromHtml("#be0006"));
+
+                //cell.Style.Fill.BackgroundColor.SetColor(ColorTranslator.FromHtml("#ffc7ce"));
+                //cell.Style.Fill.PatternType = ExcelFillStyle.Solid;
+
 
                 var fi = new FileInfo(@"File.xlsx");
                 excelPackage.SaveAs(fi);
@@ -71,5 +95,18 @@ namespace L2T1Excel
 
         }
 
+        private static void SetPeopleTable(List<Person> people, int row, ExcelWorksheet worksheet, int nameColumn, int surnameColumn,
+            int ageColumn, int phoneColumn)
+        {
+            foreach (var person in people)
+            {
+                row++;
+
+                worksheet.Cells[row, nameColumn].Value = person.Name;
+                worksheet.Cells[row, surnameColumn].Value = person.Surname;
+                worksheet.Cells[row, ageColumn].Value = person.Age;
+                worksheet.Cells[row, phoneColumn].Value = person.PhoneNumber;
+            }
+        }
     }
 }
