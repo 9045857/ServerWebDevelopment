@@ -41,9 +41,7 @@ namespace L2T4Log
                 }
                 catch (Exception e)
                 {
-                    logger.Error($"Вводилось значение: \"{word}\"" +
-                                 Environment.NewLine +
-                                 e.Message);
+                    logger.Error(e,$"Вводилось значение: \"{word}\"" );
 
                     Console.WriteLine(e.Message);
                 }

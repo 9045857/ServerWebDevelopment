@@ -1,4 +1,5 @@
 ﻿using System;
+using NLog;
 
 namespace L2T4Log
 {
@@ -9,8 +10,12 @@ namespace L2T4Log
 
         public NumberWord(int number)
         {
+            var logger = LogManager.GetCurrentClassLogger();
+
             Number = number;
             ParseToString(number);
+
+            logger.Trace($"{Number}-{Word}");
         }
 
         private void ParseToString(int number)
