@@ -1,18 +1,15 @@
-﻿using System;
+﻿using OfficeOpenXml;
+using OfficeOpenXml.Style;
+using System;
 using System.Collections.Generic;
 using System.Drawing;
 using System.IO;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using OfficeOpenXml;
-using OfficeOpenXml.Style;
 
 namespace L2T1Excel
 {
-    class Program
+    internal class Program
     {
-        static void Main(string[] args)
+        private static void Main()
         {
             var people = new List<Person>()
             {
@@ -31,68 +28,150 @@ namespace L2T1Excel
 
         private static void SetTitleStyle(ExcelRange excelRange)
         {
-                excelRange.Style.Border.Bottom.Style = ExcelBorderStyle.Thick;
+            excelRange.Style.Border.Bottom.Style = ExcelBorderStyle.Thick;
+            excelRange.Style.Border.Bottom.Color.SetColor(Color.FromArgb(142, 180, 227));
 
-                excelRange.Style.Fill.PatternType = ExcelFillStyle.Solid;
-                excelRange.Style.Fill.BackgroundColor.SetColor(Color.LightYellow);
-           
-                excelRange.Style.HorizontalAlignment = ExcelHorizontalAlignment.Center;
-                excelRange.Style.VerticalAlignment = ExcelVerticalAlignment.Center;
-                excelRange.Style.Font.Bold = true;
+            excelRange.Style.Fill.PatternType = ExcelFillStyle.Solid;
+            excelRange.Style.Fill.BackgroundColor.SetColor(Color.FromArgb(0, 112, 192));
 
-                excelRange.Style.Font.Color.SetColor(ColorTranslator.FromHtml("#be0006"));
-           
+            excelRange.Style.HorizontalAlignment = ExcelHorizontalAlignment.Center;
+            excelRange.Style.VerticalAlignment = ExcelVerticalAlignment.Center;
+            excelRange.Style.Font.Bold = true;
+            excelRange.Style.Font.Size = 12;
+
+            excelRange.Style.Font.Color.SetColor(ColorTranslator.FromHtml("#fff"));
+        }
+
+        private static void SetPeopleTableStyle(ExcelRange excelRange)
+        {
+            var rowTop = excelRange.Start.Row;
+            var columnLeft = excelRange.Start.Column;
+            var rowBottom = excelRange.End.Row;
+            var columnRight = excelRange.End.Column;
+            var rowsCount = excelRange.Rows;
+            var columnsCount = excelRange.Columns;
+
+            for (var i = 1; i < rowsCount; i += 2)
+            {
+                var rowIndex = rowTop + i;
+
+                var rowRange = excelRange[rowIndex, columnLeft, rowIndex, columnRight];
+                rowRange.Style.Fill.PatternType = ExcelFillStyle.Solid;
+                rowRange.Style.Fill.BackgroundColor.SetColor(Color.FromArgb(242, 242, 242));
+            }
+
+            for (var i = columnLeft; i < columnsCount; i++)
+            {
+                var rowRange = excelRange[rowTop, i, rowBottom, i];
+                rowRange.Style.Border.Right.Style = ExcelBorderStyle.Thin;
+                rowRange.Style.Border.Right.Color.SetColor(Color.FromArgb(255, 255, 255));
+            }
+
+            var phonesRange = excelRange[rowTop, columnRight, rowBottom, columnRight];
+            phonesRange.Style.HorizontalAlignment = ExcelHorizontalAlignment.Right;
+
+            var agesRange = excelRange[rowTop, columnRight - 1, rowBottom, columnRight - 1];
+            agesRange.Style.HorizontalAlignment = ExcelHorizontalAlignment.Center;
+
+            var peopleRange = excelRange[rowTop, columnLeft, rowBottom, columnRight];
+            peopleRange.Style.VerticalAlignment = ExcelVerticalAlignment.Center;
+            peopleRange.Style.Font.Name = "Times New Roman";
+            peopleRange.Style.Font.Size = 12;
+
+            const double minWidth = 10.0;
+            const double maxWidth = 20.0;
+            excelRange[rowTop, columnLeft, rowBottom, columnRight].AutoFitColumns(minWidth, maxWidth);
+        }
+
+        private static void SetCaptionTable(ExcelRangeBase excelRange)
+        {
+            excelRange.Merge = true;
+
+            excelRange.Style.HorizontalAlignment = ExcelHorizontalAlignment.Center;
+            excelRange.Style.VerticalAlignment = ExcelVerticalAlignment.Center;
+
+            excelRange.Style.Font.Bold = true;
+            excelRange.Style.Font.UnderLine = true;
+
+            excelRange.Style.Font.Name = "Comic Sans MS";
+            excelRange.Style.Font.Size = 14;
+
+            const double rowHeightToText = 1.5;
+            excelRange.Worksheet.Row(excelRange.Start.Row).Height *= rowHeightToText;
+        }
+
+        private static void SetCommonTableFeatures(ExcelRange title, ExcelRange mainTable)
+        {
+            var topRow = title.Start.Row;
+            var leftColumn = title.Start.Column;
+
+            var bottomRow = mainTable.End.Row;
+            var rightColumn = mainTable.End.Column;
+
+            var sheet = title.Worksheet;
+            var table = sheet.Cells[topRow, leftColumn, bottomRow, rightColumn];
+
+            table.Style.Border.BorderAround(ExcelBorderStyle.Medium,Color.CornflowerBlue);
         }
 
         private static void CreateXlsx(List<Person> people)
         {
             using (var excelPackage = new ExcelPackage())
             {
-                excelPackage.Workbook.Properties.Author = "VDWWD";
-                excelPackage.Workbook.Properties.Title = "Title of Document";
-                excelPackage.Workbook.Properties.Subject = "EPPlus demo export data";
+                excelPackage.Workbook.Properties.Author = "Student";
+                excelPackage.Workbook.Properties.Title = "Task 1 - EPPLus";
+                excelPackage.Workbook.Properties.Subject = "EPPlus task of second lecture.";
                 excelPackage.Workbook.Properties.Created = DateTime.Now;
 
-                var worksheet = excelPackage.Workbook.Worksheets.Add("Sheet 1");
+                var worksheet = excelPackage.Workbook.Worksheets.Add("Человеческая таблица");
 
-                //Add some text to cell A1
-                //worksheet.Cells["A1"].Value = "My first EPPlus spreadsheet!";
-                ////You could also use [line, column] notation:
-                //worksheet.Cells[1, 2].Value = "This is cell B1!";
-
+                const int captionRow = 1;
 
                 const int nameColumn = 1;
                 const int surnameColumn = 2;
                 const int ageColumn = 3;
                 const int phoneColumn = 4;
-                var row = 1;
 
-                var title = worksheet.Cells[row, nameColumn, row, phoneColumn];
+                var captionRange = worksheet.Cells[captionRow, nameColumn, captionRow, phoneColumn];
+                var caption = "Таблица людей";
+                captionRange.Value = caption;
 
-                title.LoadFromArrays(new object[][]
+                SetCaptionTable(captionRange);
+
+                const int firstRowTable = 2;
+                const int titleRowsCount = 1;
+                const int lastRowTitle = firstRowTable + titleRowsCount - 1;
+
+                var title = worksheet.Cells[firstRowTable, nameColumn, lastRowTitle, phoneColumn];
+
+                title.LoadFromArrays(new[]
                 {
                         new[] { "Имя", "Фамилия", "Возраст", "Телефон" }
                 });
 
                 SetTitleStyle(title);
 
-                SetPeopleTable(people, row, worksheet, nameColumn, surnameColumn, ageColumn, phoneColumn);
+                const int firstRowPeople = lastRowTitle + 1;
+                SetPeopleTable(people, firstRowPeople, worksheet, nameColumn, surnameColumn, ageColumn, phoneColumn);
 
-                //var cell = worksheet.Cells["E1"];
-                //cell.Style.Font.Name = "Calibri";
-                //cell.Style.Font.Size = 11;
-                //cell.Style.Fill.BackgroundColor.SetColor(ColorTranslator.FromHtml("#ffc7ce"));
-                //cell.Style.Fill.PatternType = ExcelFillStyle.Solid;
-                //cell.Font.Color.SetColor(ColorTranslator.FromHtml("#be0006"));
+                var lastRowPeople = lastRowTitle + people.Count;
+                var peopleTableRange = worksheet.Cells[firstRowPeople, nameColumn, lastRowPeople, phoneColumn];
 
-                //cell.Style.Fill.BackgroundColor.SetColor(ColorTranslator.FromHtml("#ffc7ce"));
-                //cell.Style.Fill.PatternType = ExcelFillStyle.Solid;
+                SetPeopleTableStyle(peopleTableRange);
 
+                SetCommonTableFeatures(title,peopleTableRange);
 
-                var fi = new FileInfo(@"File.xlsx");
-                excelPackage.SaveAs(fi);
+                try
+                {
+                    var fi = new FileInfo("File.xlsx");
+                    excelPackage.SaveAs(fi);
+                }
+                catch (Exception e)
+                {
+                    Console.WriteLine(e.Message);
+                    Console.ReadKey();
+                }
             }
-
         }
 
         private static void SetPeopleTable(List<Person> people, int row, ExcelWorksheet worksheet, int nameColumn, int surnameColumn,
@@ -100,12 +179,12 @@ namespace L2T1Excel
         {
             foreach (var person in people)
             {
-                row++;
-
                 worksheet.Cells[row, nameColumn].Value = person.Name;
                 worksheet.Cells[row, surnameColumn].Value = person.Surname;
                 worksheet.Cells[row, ageColumn].Value = person.Age;
                 worksheet.Cells[row, phoneColumn].Value = person.PhoneNumber;
+
+                row++;
             }
         }
     }
