@@ -30,12 +30,12 @@ namespace L3T1ADO_NET
             using (var connection = new SqlConnection(connectionString))
             {
                 connection.Open();
-                
+
                 //• Вывести общее количество товаров
                 const string sqlProductsCount = "SELECT COUNT(*) FROM dbo.Product";
                 using (var command = new SqlCommand(sqlProductsCount, connection))
                 {
-                    Console.WriteLine("ЗАДАНИЕ 1: • Вывести общее количество товаров");
+                    Console.WriteLine("ЗАДАНИЕ 1: Вывести общее количество товаров");
 
                     var productsCount = (int)command.ExecuteScalar();
                     Console.WriteLine($"Всего разных продуктов = {productsCount}");
@@ -86,7 +86,7 @@ namespace L3T1ADO_NET
                         var columnName1 = reader.GetName(0);
                         var columnName2 = reader.GetName(1);
 
-                        Console.WriteLine("ЗАДАНИЕ 2: • Создать некоторую категорию и товар");
+                        Console.WriteLine("ЗАДАНИЕ 2: Создать некоторую категорию и товар");
                         Console.WriteLine($"Создали категорию '{printerCategory}'");
                         Console.WriteLine("-=Таблица Категорий=-");
 
@@ -116,7 +116,7 @@ namespace L3T1ADO_NET
                     command.ExecuteNonQuery();
                 }
 
-                Console.WriteLine("ЗАДАНИЕ 3: • Отредактировать некоторый товар");
+                Console.WriteLine("ЗАДАНИЕ 3: Отредактировать некоторый товар");
                 Console.WriteLine($"Редактируем цену {correctedProduct} -> {newPrice}");
                 Console.WriteLine();
                 Console.WriteLine("-=Таблица Продуктов с отредактированной позицией=-");
@@ -135,11 +135,11 @@ namespace L3T1ADO_NET
                 }
 
                 Console.WriteLine();
-                Console.WriteLine("ЗАДАНИЕ 4: • Удалить некоторый товар");
+                Console.WriteLine("ЗАДАНИЕ 4: Удалить некоторый товар");
                 Console.WriteLine($"Удаляем позицию {cutProduct}");
 
                 Console.WriteLine("-=Таблица Продуктов после удаления позиции=-");
-                
+
                 PrintCategoryProducts(categoryId, connection);
                 PrintPressKey(true);
 
@@ -159,7 +159,7 @@ namespace L3T1ADO_NET
                         var columnName4 = reader.GetName(3);
 
                         Console.WriteLine();
-                        Console.WriteLine("ЗАДАНИЕ 4: • Выгрузить весь список товаров вместе с именами категорий через");
+                        Console.WriteLine("ЗАДАНИЕ 5: Выгрузить весь список товаров вместе с именами категорий через");
                         Console.WriteLine("reader, и распечатайте все данные в цикле");
                         Console.WriteLine();
 
@@ -187,7 +187,7 @@ namespace L3T1ADO_NET
                 adapter.Fill(ds);
 
                 Console.WriteLine();
-                Console.WriteLine("ЗАДАНИЕ 5: • Выгрузить весь список товаров вместе с именами категорий в");
+                Console.WriteLine("ЗАДАНИЕ 6: Выгрузить весь список товаров вместе с именами категорий в");
                 Console.WriteLine("DataSet через SqlDataAdapter, и распечатайте все данные в цикле");
                 Console.WriteLine();
 
@@ -240,7 +240,7 @@ namespace L3T1ADO_NET
                     var columnName1 = reader.GetName(0);
                     var columnName2 = reader.GetName(1);
                     var columnName3 = reader.GetName(2);
-                    
+
                     Console.WriteLine($"{columnName1,SpaceId}{columnName2,SpaceName}{columnName3,SpacePrice}");
 
                     while (reader.Read())
