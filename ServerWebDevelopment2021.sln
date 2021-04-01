@@ -31,7 +31,9 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "L2T3VectorUnitTest", "L2T3V
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "L2T3UnitTest", "L2T3UnitTest\L2T3UnitTest.csproj", "{1B871301-3F29-46AB-8EEE-B944C352C47B}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "L3T1ADO_NET", "L3T1ADO_NET\L3T1ADO_NET.csproj", "{2CF8BA8F-8A8B-4E87-BAA1-9F361543C76A}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "L3T1ADO_NET", "L3T1ADO_NET\L3T1ADO_NET.csproj", "{2CF8BA8F-8A8B-4E87-BAA1-9F361543C76A}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "L3T2Transactions", "L3T2Transactions\L3T2Transactions.csproj", "{A692F7E3-7551-47F5-82AF-BB9D3AD55F70}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -99,6 +101,10 @@ Global
 		{2CF8BA8F-8A8B-4E87-BAA1-9F361543C76A}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{2CF8BA8F-8A8B-4E87-BAA1-9F361543C76A}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{2CF8BA8F-8A8B-4E87-BAA1-9F361543C76A}.Release|Any CPU.Build.0 = Release|Any CPU
+		{A692F7E3-7551-47F5-82AF-BB9D3AD55F70}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{A692F7E3-7551-47F5-82AF-BB9D3AD55F70}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{A692F7E3-7551-47F5-82AF-BB9D3AD55F70}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{A692F7E3-7551-47F5-82AF-BB9D3AD55F70}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
