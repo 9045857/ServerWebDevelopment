@@ -2,6 +2,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using Microsoft.EntityFrameworkCore;
 
 namespace L4T1ShopEF
 {
@@ -13,11 +14,13 @@ namespace L4T1ShopEF
             {
                 db.Database.EnsureCreated();
 
-                SetBeginProductSetData(db);
+                    //   SetBeginProductSetData(db);
 
-               // db.SaveChanges();
 
-                var categories = db.Categories.ToList();
+                var categories = db.Categories
+                    .Include(pc=>pc.ProductCategories)
+                    .ThenInclude(p=>p.Product)
+                    .ToList();
 
                 foreach (var c in categories)
                 {
@@ -33,7 +36,11 @@ namespace L4T1ShopEF
 
                 Console.WriteLine("----ПРОЙДЕМСЯ ПО ПРОДУКТАМ--------");
 
-                var products = db.Products.ToList();
+                var products = db.Products
+                    .Include(pc=>pc.ProductCategories)
+                    .ThenInclude(c=>c.Category)
+                    .ToList();
+
                 foreach (var p in products)
                 {
                     Console.WriteLine($"product: {p.Name} - {p.Price}");
@@ -54,7 +61,7 @@ namespace L4T1ShopEF
                 Console.WriteLine("Удалим базу данных.");
                 Console.ReadKey();
 
-                db.Database.EnsureDeleted();
+                    //  db.Database.EnsureDeleted();
             }
         }
 
@@ -73,6 +80,8 @@ namespace L4T1ShopEF
             AddProduct(db, "Мыло", new List<string> {"Химия"},  300);
             AddProduct(db, "Пемолюкс", new List<string> {"Химия"},  750);
         }
+
+
 
         private static IEnumerable<Category> GetCategories(ShopContext db, IEnumerable<string> categoryNames)
         {

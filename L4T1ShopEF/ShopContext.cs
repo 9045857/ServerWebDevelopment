@@ -16,5 +16,19 @@ namespace L4T1ShopEF
         {
             options.UseSqlServer("Server=.;Integrated Security=true;Database=L4Shop;MultipleActiveResultSets=true");
         }
+
+        protected override void OnModelCreating(ModelBuilder modelBuilder)
+        {
+            modelBuilder.Entity<ProductCategory>(b =>
+            {
+                b.HasOne(pc => pc.Category)
+                    .WithMany(c => c.ProductCategories)
+                    .HasForeignKey(pc => pc.CategoryId);
+
+                b.HasOne(pc => pc.Product)
+                    .WithMany(p => p.ProductCategories)
+                    .HasForeignKey(pc => pc.ProductId);
+            });
+        }
     }
 }

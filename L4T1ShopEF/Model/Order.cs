@@ -9,11 +9,15 @@ namespace L4T1ShopEF.Model
         [Key]
         public int Id { get; set; }
 
+        [Required]
         public DateTime BoughtOn { get; set; }
 
+        [Required]
         public int BuyerId { get; set; }
+
+        [Required]
         public Buyer Buyer { get; set; }
 
-        public List<ProductOrder> ProductOrders { get; set; } = new List<ProductOrder>();
+        public virtual ICollection<ProductOrder> ProductOrders { get; set; } = new List<ProductOrder>();
     }
 }

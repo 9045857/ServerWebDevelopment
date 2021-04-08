@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
 
 namespace L4T1ShopEF.Model
 {
@@ -7,12 +8,16 @@ namespace L4T1ShopEF.Model
     {
         [Key]
         public int Id { get; set; }
-
+        
+        [Required]
+        [MaxLength(100)]
         public string Name { get; set; }
-        public decimal Price { get; set; }
 
-        public List<ProductCategory> ProductCategories { get; set; } = new List<ProductCategory>();
+        [Column(TypeName = "decimal(10, 2)")]
+        public decimal? Price { get; set; }
 
-        public List<ProductOrder> ProductOrders { get; set; } = new List<ProductOrder>();
+        public virtual ICollection<ProductCategory> ProductCategories { get; set; } = new List<ProductCategory>();
+
+        public virtual ICollection<ProductOrder> ProductOrders { get; set; } = new List<ProductOrder>();
     }
 }
