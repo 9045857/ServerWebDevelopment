@@ -29,6 +29,17 @@ namespace L4T1ShopEF
                     .WithMany(p => p.ProductCategories)
                     .HasForeignKey(pc => pc.ProductId);
             });
+
+           modelBuilder.Entity<ProductOrder>(b =>
+            {
+                b.HasOne(po => po.Product)
+                    .WithMany(p => p.ProductOrders)
+                    .HasForeignKey(po => po.ProductId);
+
+                b.HasOne(po => po.Order)
+                    .WithMany(o => o.ProductOrders)
+                    .HasForeignKey(po => po.OrderId);
+            });
         }
     }
 }

@@ -12,7 +12,7 @@ namespace L4T1ShopEF.Model
         [Required]
         public DateTime BoughtOn { get; set; }
 
-        [Required]
+   
         public int BuyerId { get; set; }
 
         [Required]
