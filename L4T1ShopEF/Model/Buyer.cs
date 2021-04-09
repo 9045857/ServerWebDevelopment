@@ -3,7 +3,7 @@ using System.ComponentModel.DataAnnotations;
 
 namespace L4T1ShopEF.Model
 {
-    internal class Buyer
+    public class Buyer
     {
         [Key]
         public int Id { get; set; }

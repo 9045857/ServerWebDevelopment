@@ -14,7 +14,9 @@ namespace L4T1ShopEF
 
         protected override void OnConfiguring(DbContextOptionsBuilder options)
         {
-            options.UseSqlServer("Server=.;Integrated Security=true;Database=L4Shop;MultipleActiveResultSets=true");
+            options
+                .UseLazyLoadingProxies()
+                .UseSqlServer("Server=.;Integrated Security=true;Database=L4Shop;MultipleActiveResultSets=true");
         }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
@@ -30,16 +32,16 @@ namespace L4T1ShopEF
                     .HasForeignKey(pc => pc.ProductId);
             });
 
-           modelBuilder.Entity<ProductOrder>(b =>
-            {
-                b.HasOne(po => po.Product)
-                    .WithMany(p => p.ProductOrders)
-                    .HasForeignKey(po => po.ProductId);
+            modelBuilder.Entity<ProductOrder>(b =>
+             {
+                 b.HasOne(po => po.Order)
+                     .WithMany(o => o.ProductOrders)
+                     .HasForeignKey(po => po.OrderId);
 
-                b.HasOne(po => po.Order)
-                    .WithMany(o => o.ProductOrders)
-                    .HasForeignKey(po => po.OrderId);
-            });
+                 b.HasOne(po => po.Product)
+                     .WithMany(p => p.ProductOrders)
+                     .HasForeignKey(po => po.ProductId);
+             });
         }
     }
 }

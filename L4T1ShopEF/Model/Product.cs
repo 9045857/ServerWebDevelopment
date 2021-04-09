@@ -4,7 +4,7 @@ using System.ComponentModel.DataAnnotations.Schema;
 
 namespace L4T1ShopEF.Model
 {
-    internal class Product
+    public class Product
     {
         [Key]
         public int Id { get; set; }

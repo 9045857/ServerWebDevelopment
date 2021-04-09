@@ -4,7 +4,7 @@ using System.ComponentModel.DataAnnotations;
 
 namespace L4T1ShopEF.Model
 {
-    internal class Order
+    public class Order
     {
         [Key]
         public int Id { get; set; }
@@ -16,7 +16,7 @@ namespace L4T1ShopEF.Model
         public int BuyerId { get; set; }
 
         [Required]
-        public Buyer Buyer { get; set; }
+        public virtual Buyer Buyer { get; set; }
 
         public virtual ICollection<ProductOrder> ProductOrders { get; set; } = new List<ProductOrder>();
     }
