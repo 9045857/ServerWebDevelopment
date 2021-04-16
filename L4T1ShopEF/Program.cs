@@ -20,158 +20,191 @@ namespace L4T1ShopEF
                 SetBeginOrderBuyers(db);
 
                 //-Попробуйте поиск, редактирование, удаление данных
-                Console.WriteLine("ЗАДАНИЕ: Поиск покупателей товара 'Мясо'");
-                BreakConsole();
-
-                var searchProductName = "Мясо";
-                var searchProduct = db.Products
-                    .Include(o => o.ProductOrders)
-                    .ThenInclude(po => po.Order)
-                    .FirstOrDefault(p => p.Name == searchProductName);
-
-                if (searchProduct != null)
-                {
-                    Console.WriteLine($"РЕЗУЛЬТАТ. {searchProduct.Name} покупали:");
-
-                    foreach (var po in searchProduct.ProductOrders)
-                    {
-                        Console.WriteLine($"{po.Count}шт  {po.Order.Buyer.Name}");
-                    }
-                }
-
-                PrintBlockEnd();
+                //search 
+                SolveSearchingProductName(db);
 
                 //edit
-                Console.WriteLine("ЗАДАНИЕ: Изменим стоимость 'Сок' на 345");
-                BreakConsole();
-
-                searchProductName = "Сок";
-                var editingProduct = db.Products.FirstOrDefault(p => p.Name == searchProductName);
-
-                if (editingProduct?.Price != null)
-                {
-                    var oldPrice = (decimal)editingProduct.Price;
-
-                    const decimal newPrice = 345;
-                    editingProduct.Price = newPrice;
-
-                    db.SaveChanges();
-
-                    if (db.Products != null)
-                    {
-                        // ReSharper disable once PossibleNullReferenceException
-                        var actualPrice = db.Products
-                            .FirstOrDefault(p => p.Name == searchProductName)
-                            .Price;
-
-                        Console.WriteLine($"РЕШЕНИЕ: У продукта 'Сок' была цена {oldPrice}, а стала {actualPrice}");
-                    }
-
-                    BreakConsole();
-                }
+                SolveEditingProduct(db);
 
                 //delete
-                Console.WriteLine("ЗАДАНИЕ: Удалим 'Сок'");
-                BreakConsole();
-
-                if (editingProduct != null)
-                {
-                    db.Entry((object)editingProduct).State = EntityState.Deleted;
-                    db.SaveChanges();
-
-                    PrintCategoryProduct(db);
-                }
-
-                Console.WriteLine("Удалим 'ЭнерджиГель'/ Он есть во всех категориях.");
-                Console.WriteLine("удаление сделаем напрямую через SQL");
-                BreakConsole();
-
-                try
-                {
-                    searchProductName = "ЭнерджиГель";
-                    db.Database.ExecuteSqlInterpolated($"DELETE FROM Products WHERE Name = {searchProductName}");
-
-                    PrintCategoryProduct(db);
-
-                    Console.WriteLine("------");
-                    Console.WriteLine("ВОПРОС!");
-                    Console.WriteLine("Почему не видно удаления? Реально в базе все удалилось. ");
-
-                    BreakConsole();
-
-                    PrintProducts(db);
-
-                    PrintBlockEndBreakConsole();
-                }
-                catch (Exception e)
-                {
-                    Console.WriteLine("Ошибка удаления");
-                    Console.WriteLine(e.Message);
-                }
+                SolveDeletingProduct(db);
 
                 //При помощи LINQ
                 //•Найти самый часто покупаемый товар
-                Console.WriteLine("ЗАДАНИЕ: Найдем самый часто покупаемый товар");
-
-                var maxBoughtProductCount = db.Products
-                    .OrderByDescending(p => p.ProductOrders.Count)
-                    .First()
-                    .ProductCategories
-                    .Count;
-
-                var maxBoughtProducts = db.Products
-                    .Where(p => p.ProductOrders.Count == maxBoughtProductCount);
-
-                Console.WriteLine($"РЕШЕНИЕ: Список продуктов, которые купили по {maxBoughtProductCount} раз:");
-                foreach (var product in maxBoughtProducts)
-                {
-                    Console.WriteLine($"{product.Name}");
-                }
-
-                PrintBlockEndBreakConsole();
+                SolveBestsellerSearch(db);
 
                 //•Найти сколько каждый клиент потратил денег за все время
-                Console.WriteLine("ЗАДАНИЕ: Найдем сколько каждый клиент потратил денег за все время.");
-
-                var totalCosts = db.Buyers
-                    .Select(b => new
-                    {
-                        name = b.Name,
-                        costs = b.Orders
-                            .SelectMany(o => o.ProductOrders)
-                            .Select(po => po.Product.Price * po.Count)
-                            .Sum()
-                    });
-
-                Console.WriteLine("Сумма        Клиент");
-                foreach (var buyerCosts in totalCosts)
-                {
-                    Console.WriteLine($" {buyerCosts.costs}   {buyerCosts.name}");
-                }
-
-                PrintBlockEndBreakConsole();
+                SolveExpenses(db);
 
                 //•Вывести сколько товаров каждой категории купили
-                Console.WriteLine("ЗАДАНИЕ: Найдем сколько товаров каждой категории купили.");
+                SolveCategorySales(db);
+            }
+        }
 
-                var categoryProductsBought = db.Categories
-                    .Select(c => new
-                    {
-                        c.Name,
-                        boughtProductsCount = c.ProductCategories
-                            .Select(pc => pc.Product)
-                            .SelectMany(p => p.ProductOrders)
-                            .Select(po => po.Count).Sum()
-                    });
+        private static void SolveCategorySales(ShopContext db)
+        {
+            Console.WriteLine("ЗАДАНИЕ: Найдем сколько товаров каждой категории купили.");
 
-                Console.WriteLine("Кол-во купленных товаров  /  Категория");
-                foreach (var category in categoryProductsBought)
+            var categoryProductsBought = db.Categories
+                .Select(c => new
                 {
-                    Console.WriteLine($"{category.boughtProductsCount}   {category.Name} ");
-                }
+                    c.Name,
+                    boughtProductsCount = c.ProductCategories
+                        .Select(pc => pc.Product)
+                        .SelectMany(p => p.ProductOrders)
+                        .Select(po => po.Count).Sum()
+                });
+
+            Console.WriteLine("Кол-во купленных товаров  /  Категория");
+            foreach (var category in categoryProductsBought)
+            {
+                Console.WriteLine($"{category.boughtProductsCount}   {category.Name} ");
+            }
+
+            PrintBlockEndBreakConsole();
+        }
+
+        private static void SolveExpenses(ShopContext db)
+        {
+            Console.WriteLine("ЗАДАНИЕ: Найдем сколько каждый клиент потратил денег за все время.");
+
+            var totalCosts = db.Buyers
+                .Select(b => new
+                {
+                    name = b.Name,
+                    costs = b.Orders
+                        .SelectMany(o => o.ProductOrders)
+                        .Select(po => po.Product.Price * po.Count)
+                        .Sum()
+                });
+
+            Console.WriteLine("Сумма        Клиент");
+            foreach (var buyerCosts in totalCosts)
+            {
+                Console.WriteLine($" {buyerCosts.costs}   {buyerCosts.name}");
+            }
+
+            PrintBlockEndBreakConsole();
+        }
+
+        private static void SolveBestsellerSearch(ShopContext db)
+        {
+            Console.WriteLine("ЗАДАНИЕ: Найдем самый часто покупаемый товар");
+
+            var maxBoughtProductCount = db.Products
+                .OrderByDescending(p => p.ProductOrders.Count)
+                .First()
+                .ProductCategories
+                .Count;
+
+            var maxBoughtProducts = db.Products
+                .Where(p => p.ProductOrders.Count == maxBoughtProductCount);
+
+            Console.WriteLine($"РЕШЕНИЕ: Список продуктов, которые купили по {maxBoughtProductCount} раз:");
+            foreach (var product in maxBoughtProducts)
+            {
+                Console.WriteLine($"{product.Name}");
+            }
+
+            PrintBlockEndBreakConsole();
+        }
+
+        private static void SolveDeletingProduct(ShopContext db)
+        {
+            Console.WriteLine("ЗАДАНИЕ: Удалим 'Сок'");
+            BreakConsole();
+
+            var searchProductName = "Сок";
+            var editingProduct = db.Products.FirstOrDefault(p => p.Name == searchProductName);
+
+            if (editingProduct != null)
+            {
+                db.Entry((object)editingProduct).State = EntityState.Deleted;
+                db.SaveChanges();
+
+                PrintCategoryProduct(db);
+            }
+
+            Console.WriteLine("Удалим 'ЭнерджиГель'/ Он есть во всех категориях.");
+            Console.WriteLine("удаление сделаем напрямую через SQL");
+            BreakConsole();
+
+            try
+            {
+                searchProductName = "ЭнерджиГель";
+                db.Database.ExecuteSqlInterpolated($"DELETE FROM Products WHERE Name = {searchProductName}");
+
+                PrintCategoryProduct(db);
+
+                Console.WriteLine("------");
+                Console.WriteLine("ВОПРОС!");
+                Console.WriteLine("Почему не видно удаления? Реально в базе все удалилось. ");
+
+                BreakConsole();
+
+                PrintProducts(db);
 
                 PrintBlockEndBreakConsole();
             }
+            catch (Exception e)
+            {
+                Console.WriteLine("Ошибка удаления");
+                Console.WriteLine(e.Message);
+            }
+        }
+
+        private static void SolveEditingProduct(ShopContext db)
+        {
+            Console.WriteLine("ЗАДАНИЕ: Изменим стоимость 'Сок' на 345");
+            BreakConsole();
+
+            const string searchProductName = "Сок";
+            var editingProduct = db.Products.FirstOrDefault(p => p.Name == searchProductName);
+
+            if (editingProduct?.Price == null) return;
+
+            var oldPrice = (decimal)editingProduct.Price;
+
+            const decimal newPrice = 345;
+            editingProduct.Price = newPrice;
+
+            db.SaveChanges();
+
+            if (db.Products != null)
+            {
+                // ReSharper disable once PossibleNullReferenceException
+                var actualPrice = db.Products
+                    .FirstOrDefault(p => p.Name == searchProductName)
+                    .Price;
+
+                Console.WriteLine($"РЕШЕНИЕ: У продукта 'Сок' была цена {oldPrice}, а стала {actualPrice}");
+            }
+
+            BreakConsole();
+        }
+
+        private static void SolveSearchingProductName(ShopContext db)
+        {
+            Console.WriteLine("ЗАДАНИЕ: Поиск покупателей товара 'Мясо'");
+            BreakConsole();
+
+            const string searchProductName = "Мясо";
+            var searchProduct = db.Products
+                .Include(o => o.ProductOrders)
+                .ThenInclude(po => po.Order)
+                .FirstOrDefault(p => p.Name == searchProductName);
+
+            if (searchProduct != null)
+            {
+                Console.WriteLine($"РЕЗУЛЬТАТ. {searchProduct.Name} покупали:");
+
+                foreach (var po in searchProduct.ProductOrders)
+                {
+                    Console.WriteLine($"{po.Count}шт  {po.Order.Buyer.Name}");
+                }
+            }
+
+            PrintBlockEnd();
         }
 
         private static void PrintBlockEndBreakConsole()
