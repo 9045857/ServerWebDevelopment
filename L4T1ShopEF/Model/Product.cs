@@ -8,7 +8,7 @@ namespace L4T1ShopEF.Model
     {
         [Key]
         public int Id { get; set; }
-        
+
         [Required]
         [MaxLength(100)]
         public string Name { get; set; }

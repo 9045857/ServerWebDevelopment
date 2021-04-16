@@ -21,37 +21,35 @@ namespace L4T1ShopEF
 
                 //-Попробуйте поиск, редактирование, удаление данных
                 //firstOrDefault
-                Console.WriteLine("Найдем покупателей товара 'Мясо'");
-                Console.WriteLine("нажми любую клавишу...");
-                Console.ReadKey();
+                Console.WriteLine("ЗАДАНИЕ: Поиск покупателей товара 'Мясо'");
+                BreakConsole();
 
-                var searchProduct = "Мясо";
-                var products = db.Products
+                var searchProductName = "Мясо";
+                var searchProduct = db.Products
                     .Include(o => o.ProductOrders)
                     .ThenInclude(po => po.Order)
-                    .Where(p => p.Name == searchProduct)
-                    .ToList();
+                    //.Where(p => p.Name == searchProduct)
+                    //.ToList();
+                    .FirstOrDefault(p => p.Name == searchProductName);
 
-                foreach (var product in products)
+                if (searchProduct != null)
                 {
-                    Console.WriteLine($"{product.Name}");
+                    Console.WriteLine($"РЕЗУЛЬТАТ. {searchProduct.Name} покупали:");
 
-                    foreach (var po in product.ProductOrders)
+                    foreach (var po in searchProduct.ProductOrders)
                     {
-                        Console.WriteLine($"{po.Order.Buyer.Name} - {po.Count} шт ");
+                        Console.WriteLine($"{po.Count}шт  {po.Order.Buyer.Name}");
                     }
                 }
 
-                Console.WriteLine("-------------------------------");
-                Console.WriteLine();
+                PrintBlockEnd();
 
                 //edit
-                Console.WriteLine("Изменим стоимость 'Сок' на 345");
-                Console.WriteLine("нажми любую клавишу...");
-                Console.ReadKey();
+                Console.WriteLine("ЗАДАНИЕ: Изменим стоимость 'Сок' на 345");
+                BreakConsole();
 
-                searchProduct = "Сок";
-                var editingProduct = db.Products.FirstOrDefault(p => p.Name == searchProduct);
+                searchProductName = "Сок";
+                var editingProduct = db.Products.FirstOrDefault(p => p.Name == searchProductName);
 
                 if (editingProduct?.Price != null)
                 {
@@ -62,18 +60,22 @@ namespace L4T1ShopEF
 
                     db.SaveChanges();
 
-                    var actualPrice = db.Products.FirstOrDefault(p => p.Name == searchProduct).Price;
+                    if (db.Products != null)
+                    {
+                        // ReSharper disable once PossibleNullReferenceException
+                        var actualPrice = db.Products
+                            .FirstOrDefault(p => p.Name == searchProductName)
+                            .Price;
 
-                    Console.WriteLine($"У продукта 'Сок' была цена {oldPrice}, а стала {actualPrice}");
-                    Console.WriteLine("нажми любую клавишу...");
-                    Console.ReadKey();
+                        Console.WriteLine($"РЕШЕНИЕ: У продукта 'Сок' была цена {oldPrice}, а стала {actualPrice}");
+                    }
+
+                    BreakConsole();
                 }
 
                 //delete
-
-                Console.WriteLine("Удалим 'Сок'");
-                Console.WriteLine("нажми любую клавишу...");
-                Console.ReadKey();
+                Console.WriteLine("ЗАДАНИЕ: Удалим 'Сок'");
+                BreakConsole();
 
                 if (editingProduct != null)
                 {
@@ -85,25 +87,24 @@ namespace L4T1ShopEF
 
                 Console.WriteLine("Удалим 'ЭнерджиГель'/ Он есть во всех категориях.");
                 Console.WriteLine("удаление сделаем напрямую через SQL");
-                Console.WriteLine("нажми любую клавишу...");
-                Console.ReadKey();
+                BreakConsole();
 
                 try
                 {
-                    searchProduct = "ЭнерджиГель";
-                    db.Database.ExecuteSqlInterpolated($"DELETE FROM Products WHERE Name = {searchProduct}");
+                    searchProductName = "ЭнерджиГель";
+                    db.Database.ExecuteSqlInterpolated($"DELETE FROM Products WHERE Name = {searchProductName}");
 
                     PrintCategoryProduct(db);
 
-                    searchProduct = "------------";
+                    Console.WriteLine("------");
                     Console.WriteLine("ВОПРОС!");
-
                     Console.WriteLine("Почему не видно удаления? Реально в базе все удалилось. ");
+
                     BreakConsole();
 
-                    Console.WriteLine("База продуктов: ");
-
                     PrintProducts(db);
+
+                    PrintBlockEndBreakConsole();
                 }
                 catch (Exception e)
                 {
@@ -113,25 +114,28 @@ namespace L4T1ShopEF
 
                 //При помощи LINQ
                 //•Найти самый часто покупаемый товар
+                Console.WriteLine("ЗАДАНИЕ: Найдем самый часто покупаемый товар");
+
                 var maxBoughtProductCount = db.Products
                     .OrderByDescending(p => p.ProductOrders.Count)
                     .First()
                     .ProductCategories
                     .Count;
 
-                //var maxBoughtProductCount = db.Products
-                //    .Max(p => p.ProductOrders.Count);//TODO Почему компелируется, но падает такой вариант?
-
                 var maxBoughtProducts = db.Products
                     .Where(p => p.ProductOrders.Count == maxBoughtProductCount);
 
-                Console.WriteLine($"Список продуктов, которые купили по {maxBoughtProductCount} раз:");
+                Console.WriteLine($"РЕШЕНИЕ: Список продуктов, которые купили по {maxBoughtProductCount} раз:");
                 foreach (var product in maxBoughtProducts)
                 {
                     Console.WriteLine($"{product.Name}");
                 }
 
+                PrintBlockEndBreakConsole();
+
                 //•Найти сколько каждый клиент потратил денег за все время
+                Console.WriteLine("ЗАДАНИЕ: Найдем сколько каждый клиент потратил денег за все время.");
+
                 var totalCosts = db.Buyers
                     .Select(b => new
                     {
@@ -142,26 +146,55 @@ namespace L4T1ShopEF
                             .Sum()
                     });
 
+                Console.WriteLine("Сумма        Клиент");
                 foreach (var buyerCosts in totalCosts)
                 {
-                    Console.WriteLine($"{buyerCosts.name} {buyerCosts.costs}");
+                    Console.WriteLine($" {buyerCosts.costs}   {buyerCosts.name}");
                 }
 
+                PrintBlockEndBreakConsole();
+
                 //•Вывести сколько товаров каждой категории купили
+                Console.WriteLine("ЗАДАНИЕ: Найдем сколько товаров каждой категории купили.");
 
+                var categoryProductsBought = db.Categories
+                    .Select(c => new
+                    {
+                        c.Name,
+                        boughtProductsCount = c.ProductCategories
+                            .Select(pc => pc.Product)
+                            .SelectMany(p => p.ProductOrders)
+                            .Select(po => po.Count).Sum()
+                    });
 
+                Console.WriteLine("Кол-во купленных товаров  /  Категория");
+                foreach (var category in categoryProductsBought)
+                {
+                    Console.WriteLine($"{category.boughtProductsCount}   {category.Name} ");
+                }
 
-                //  Console.WriteLine("Удалим базу данных.");
-                Console.ReadKey();
-
-                //  db.Database.EnsureDeleted();
+                PrintBlockEndBreakConsole();
             }
+        }
+
+        private static void PrintBlockEndBreakConsole()
+        {
+            PrintBlockEnd();
+            BreakConsole();
+        }
+
+        private static void PrintBlockEnd()
+        {
+            Console.WriteLine("-------------------------------");
+            Console.WriteLine();
         }
 
         private static void BreakConsole()
         {
+            Console.WriteLine();
             Console.WriteLine("нажми любую клавишу...");
             Console.ReadKey();
+            Console.WriteLine();
         }
 
         private static void PrintProducts(ShopContext db)
@@ -169,6 +202,7 @@ namespace L4T1ShopEF
             var products = db.Products.FromSqlRaw("SELECT * FROM Products")
                 .ToList();
 
+            Console.WriteLine("База ПРОДУКТОВ: ");
             foreach (var p in products)
             {
                 Console.WriteLine($"  {p.Price}      {p.Name}");
@@ -199,74 +233,6 @@ namespace L4T1ShopEF
             }
         }
 
-
-        private void PrintCommonInfo(ShopContext db)
-        {
-
-            //var categories = db.Categories
-            //    .Include(pc => pc.ProductCategories)
-            //    .ThenInclude(p => p.Product)
-            //    .ToList();
-
-            //foreach (var c in categories)
-            //{
-            //    Console.WriteLine($"Category: {c.Name}");
-
-            //    foreach (var p in c.ProductCategories)
-            //    {
-            //        Console.WriteLine($"product: {p.Id} - {p.ProductId} - {p.Product.Id} -{p.CategoryId} - {p.Category.Id} - {p.Product.Name}");
-            //    }
-
-            //    Console.WriteLine("-------------------");
-            //}
-
-            //Console.WriteLine("----ПРОЙДЕМСЯ ПО ПРОДУКТАМ--------");
-
-            //var products = db.Products
-            //    //.Include(pc=>pc.ProductCategories)
-            //    //.ThenInclude(c=>c.Category)
-            //    .ToList();
-
-            //foreach (var p in products)
-            //{
-            //    Console.WriteLine($"product: {p.Name} - {p.Price}");
-            //    Console.WriteLine("Id - ProductId - Product.Id - CategoryId - Category.Id - Name");
-
-            //    foreach (var c in p.ProductCategories)
-            //    {
-            //        Console.WriteLine($"category: {c.Id} - {c.ProductId} - {c.Product.Id} -{c.CategoryId} - {c.Category.Id} - {c.Category.Name}");
-            //    }
-
-            //    Console.WriteLine("-------------------");
-            //}
-
-
-            //Console.WriteLine("----ПРОЙДЕМСЯ ПО ПОКУПКАМ--------");
-
-            //var orders = db.Orders
-            //    .Include(po => po.ProductOrders)
-            //    .ThenInclude(p => p.Product)
-            //    .ToList();
-
-            //foreach (var o in orders)
-            //{
-            //    Console.WriteLine($"order: {o.BoughtOn} | {o.Buyer.Name} | Total");
-            //    Console.WriteLine("Id - Count- Price - Total - Product ");
-
-            //    foreach (var pc in o.ProductOrders)
-            //    {
-            //        var total = pc.Product.Price * pc.Count;
-            //        Console.WriteLine($"{pc.Id} - {pc.Count} - {pc.Product.Price} -{total} - {pc.Product.Name}");
-            //    }
-
-            //    Console.WriteLine("-------------------");
-            //}
-
-            //var productCount = db.Products.Count();
-            //Console.WriteLine($"Всего {productCount} товаров");
-
-        }
-
         private static void SetBeginProductSetData(ShopContext db)
         {
             AddProduct(db, "Сок", new List<string> { "Питье" }, 50);
@@ -283,8 +249,6 @@ namespace L4T1ShopEF
             AddProduct(db, "Пемолюкс", new List<string> { "Химия" }, 750);
         }
 
-
-
         private static IEnumerable<Category> GetCategories(ShopContext db, IEnumerable<string> categoryNames)
         {
             var categories = new List<Category>();
@@ -297,8 +261,6 @@ namespace L4T1ShopEF
 
             return categories;
         }
-
-
 
         private static void AddProduct(ShopContext db, string productName, IEnumerable<string> categoryNames, decimal price)
         {
@@ -472,78 +434,5 @@ namespace L4T1ShopEF
 
             db.SaveChanges();
         }
-
-        //private static void AddOrder(ShopContext db, Buyer buyer, List<ProductOrder> productOrders)
-        //{
-        //    var person = db.Buyers.FirstOrDefault(b => b.Name == buyer.Name);
-
-        //    if (person != null)
-        //    {
-        //        return;//TODO AddBuyer
-        //    }
-
-        //    product = new Product { Name = productName, Price = price };
-        //    var categories = GetCategories(db, categoryNames);
-
-        //    foreach (var category in categories)
-        //    {
-        //        var productCategory = new ProductCategory { Category = category, Product = product };
-        //        product.ProductCategories.Add(productCategory);
-        //        category.ProductCategories.Add(productCategory);
-        //    }
-
-        //    db.Products.Add(product);
-        //    db.SaveChanges();
-        //}
-
-        //private static void AddBuyer(ShopContext db, string name, string phone,string email)
-        //{
-        //    var product = db.Products.FirstOrDefault(p => p.Name == productName);
-
-        //    if (product != null)
-        //    {
-        //        return;
-        //    }
-
-        //    product = new Product { Name = productName, Price = price };
-        //    var categories = GetCategories(db, categoryNames);
-
-        //    foreach (var category in categories)
-        //    {
-        //        var productCategory = new ProductCategory { Category = category, Product = product };
-        //        product.ProductCategories.Add(productCategory);
-        //        category.ProductCategories.Add(productCategory);
-        //    }
-
-        //    db.Products.Add(product);
-        //    db.SaveChanges();
-        //}
-
-
-        //private void AddProduct(DbContext db, Product product, Category category)
-        //{
-
-
-        //    //var book = new Book
-        //    //{
-        //    //    Title = "Quantum Networking",
-        //    //    Description = "faster-than-light data communications",
-        //    //    PublishedOn = new DateTime(2057, 1, 1),
-        //    //    Price = 220
-        //    //};
-        //    //var author = new Author { Name = "Future Person" };
-        //    //book.AuthorsLink = new List<BookAuthor>
-        //    //{
-        //    //    new BookAuthor {
-        //    //        Author = author,
-        //    //        Book = book,
-        //    //        Order = 0
-        //    //    }
-        //    //};
-
-        //    ////Now add this book, with all its relationships, to the database
-        //    //context.Books.Add(book);
-
-        //}
     }
 }
