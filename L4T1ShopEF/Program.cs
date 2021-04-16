@@ -20,7 +20,6 @@ namespace L4T1ShopEF
                 SetBeginOrderBuyers(db);
 
                 //-Попробуйте поиск, редактирование, удаление данных
-                //firstOrDefault
                 Console.WriteLine("ЗАДАНИЕ: Поиск покупателей товара 'Мясо'");
                 BreakConsole();
 
@@ -28,8 +27,6 @@ namespace L4T1ShopEF
                 var searchProduct = db.Products
                     .Include(o => o.ProductOrders)
                     .ThenInclude(po => po.Order)
-                    //.Where(p => p.Name == searchProduct)
-                    //.ToList();
                     .FirstOrDefault(p => p.Name == searchProductName);
 
                 if (searchProduct != null)
