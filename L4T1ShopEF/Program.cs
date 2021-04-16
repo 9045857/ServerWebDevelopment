@@ -15,76 +15,256 @@ namespace L4T1ShopEF
                 db.Database.EnsureDeleted();
                 db.Database.EnsureCreated();
 
+                //-Через EF заполните эту БД данными 
                 SetBeginProductSetData(db);
                 SetBeginOrderBuyers(db);
 
-                //var categories = db.Categories
-                //    .Include(pc => pc.ProductCategories)
-                //    .ThenInclude(p => p.Product)
-                //    .ToList();
+                //-Попробуйте поиск, редактирование, удаление данных
+                //firstOrDefault
+                Console.WriteLine("Найдем покупателей товара 'Мясо'");
+                Console.WriteLine("нажми любую клавишу...");
+                Console.ReadKey();
 
-                //foreach (var c in categories)
-                //{
-                //    Console.WriteLine($"Category: {c.Name}");
-
-                //    foreach (var p in c.ProductCategories)
-                //    {
-                //        Console.WriteLine($"product: {p.Id} - {p.ProductId} - {p.Product.Id} -{p.CategoryId} - {p.Category.Id} - {p.Product.Name}");
-                //    }
-
-                //    Console.WriteLine("-------------------");
-                //}
-
-                //Console.WriteLine("----ПРОЙДЕМСЯ ПО ПРОДУКТАМ--------");
-
-                //var products = db.Products
-                //    //.Include(pc=>pc.ProductCategories)
-                //    //.ThenInclude(c=>c.Category)
-                //    .ToList();
-
-                //foreach (var p in products)
-                //{
-                //    Console.WriteLine($"product: {p.Name} - {p.Price}");
-                //    Console.WriteLine("Id - ProductId - Product.Id - CategoryId - Category.Id - Name");
-
-                //    foreach (var c in p.ProductCategories)
-                //    {
-                //        Console.WriteLine($"category: {c.Id} - {c.ProductId} - {c.Product.Id} -{c.CategoryId} - {c.Category.Id} - {c.Category.Name}");
-                //    }
-
-                //    Console.WriteLine("-------------------");
-                //}
-
-
-                Console.WriteLine("----ПРОЙДЕМСЯ ПО ПОКУПКАМ--------");
-
-                var orders = db.Orders
-                    .Include(po => po.ProductOrders)
-                    .ThenInclude(p => p.Product)
+                var searchProduct = "Мясо";
+                var products = db.Products
+                    .Include(o => o.ProductOrders)
+                    .ThenInclude(po => po.Order)
+                    .Where(p => p.Name == searchProduct)
                     .ToList();
 
-                foreach (var o in orders)
+                foreach (var product in products)
                 {
-                    Console.WriteLine($"order: {o.BoughtOn} | {o.Buyer.Name} | Total");
-                    Console.WriteLine("Id - Count- Price - Total - Product ");
+                    Console.WriteLine($"{product.Name}");
 
-                    foreach (var pc in o.ProductOrders)
+                    foreach (var po in product.ProductOrders)
                     {
-                        var total = pc.Product.Price * pc.Count;
-                        Console.WriteLine($"{pc.Id} - {pc.Count} - {pc.Product.Price} -{total} - {pc.Product.Name}");
+                        Console.WriteLine($"{po.Order.Buyer.Name} - {po.Count} шт ");
                     }
-
-                    Console.WriteLine("-------------------");
                 }
 
-                //var productCount = db.Products.Count();
-                //Console.WriteLine($"Всего {productCount} товаров");
+                Console.WriteLine("-------------------------------");
+                Console.WriteLine();
 
-                Console.WriteLine("Удалим базу данных.");
+                //edit
+                Console.WriteLine("Изменим стоимость 'Сок' на 345");
+                Console.WriteLine("нажми любую клавишу...");
+                Console.ReadKey();
+
+                searchProduct = "Сок";
+                var editingProduct = db.Products.FirstOrDefault(p => p.Name == searchProduct);
+
+                if (editingProduct?.Price != null)
+                {
+                    var oldPrice = (decimal)editingProduct.Price;
+
+                    const decimal newPrice = 345;
+                    editingProduct.Price = newPrice;
+
+                    db.SaveChanges();
+
+                    var actualPrice = db.Products.FirstOrDefault(p => p.Name == searchProduct).Price;
+
+                    Console.WriteLine($"У продукта 'Сок' была цена {oldPrice}, а стала {actualPrice}");
+                    Console.WriteLine("нажми любую клавишу...");
+                    Console.ReadKey();
+                }
+
+                //delete
+
+                Console.WriteLine("Удалим 'Сок'");
+                Console.WriteLine("нажми любую клавишу...");
+                Console.ReadKey();
+
+                if (editingProduct != null)
+                {
+                    db.Entry((object)editingProduct).State = EntityState.Deleted;
+                    db.SaveChanges();
+
+                    PrintCategoryProduct(db);
+                }
+
+                Console.WriteLine("Удалим 'ЭнерджиГель'/ Он есть во всех категориях.");
+                Console.WriteLine("удаление сделаем напрямую через SQL");
+                Console.WriteLine("нажми любую клавишу...");
+                Console.ReadKey();
+
+                try
+                {
+                    searchProduct = "ЭнерджиГель";
+                    db.Database.ExecuteSqlInterpolated($"DELETE FROM Products WHERE Name = {searchProduct}");
+
+                    PrintCategoryProduct(db);
+
+                    searchProduct = "------------";
+                    Console.WriteLine("ВОПРОС!");
+
+                    Console.WriteLine("Почему не видно удаления? Реально в базе все удалилось. ");
+                    BreakConsole();
+
+                    Console.WriteLine("База продуктов: ");
+
+                    PrintProducts(db);
+                }
+                catch (Exception e)
+                {
+                    Console.WriteLine("Ошибка удаления");
+                    Console.WriteLine(e.Message);
+                }
+
+                //При помощи LINQ
+                //•Найти самый часто покупаемый товар
+                var maxBoughtProductCount = db.Products
+                    .OrderByDescending(p => p.ProductOrders.Count)
+                    .First()
+                    .ProductCategories
+                    .Count;
+
+                //var maxBoughtProductCount = db.Products
+                //    .Max(p => p.ProductOrders.Count);//TODO Почему компелируется, но падает такой вариант?
+
+                var maxBoughtProducts = db.Products
+                    .Where(p => p.ProductOrders.Count == maxBoughtProductCount);
+
+                Console.WriteLine($"Список продуктов, которые купили по {maxBoughtProductCount} раз:");
+                foreach (var product in maxBoughtProducts)
+                {
+                    Console.WriteLine($"{product.Name}");
+                }
+
+                //•Найти сколько каждый клиент потратил денег за все время
+                var totalCosts = db.Buyers
+                    .Select(b => new
+                    {
+                        name = b.Name,
+                        costs = b.Orders
+                            .SelectMany(o => o.ProductOrders)
+                            .Select(po => po.Product.Price * po.Count)
+                            .Sum()
+                    });
+
+                foreach (var buyerCosts in totalCosts)
+                {
+                    Console.WriteLine($"{buyerCosts.name} {buyerCosts.costs}");
+                }
+
+                //•Вывести сколько товаров каждой категории купили
+
+
+
+                //  Console.WriteLine("Удалим базу данных.");
                 Console.ReadKey();
 
                 //  db.Database.EnsureDeleted();
             }
+        }
+
+        private static void BreakConsole()
+        {
+            Console.WriteLine("нажми любую клавишу...");
+            Console.ReadKey();
+        }
+
+        private static void PrintProducts(ShopContext db)
+        {
+            var products = db.Products.FromSqlRaw("SELECT * FROM Products")
+                .ToList();
+
+            foreach (var p in products)
+            {
+                Console.WriteLine($"  {p.Price}      {p.Name}");
+            }
+
+            Console.WriteLine("- - - - - -");
+        }
+
+        private static void PrintCategoryProduct(ShopContext db)
+        {
+            var categories = db.Categories
+                .Include(pc => pc.ProductCategories)
+                .ThenInclude(p => p.Product)
+                .ToList();
+
+            foreach (var c in categories)
+            {
+                Console.WriteLine($"Category: {c.Name}");
+
+                Console.WriteLine("   Цена           Название");
+
+                foreach (var p in c.ProductCategories)
+                {
+                    Console.WriteLine($"  {p.Product.Price}      {p.Product.Name}");
+                }
+
+                Console.WriteLine("- - - - - -");
+            }
+        }
+
+
+        private void PrintCommonInfo(ShopContext db)
+        {
+
+            //var categories = db.Categories
+            //    .Include(pc => pc.ProductCategories)
+            //    .ThenInclude(p => p.Product)
+            //    .ToList();
+
+            //foreach (var c in categories)
+            //{
+            //    Console.WriteLine($"Category: {c.Name}");
+
+            //    foreach (var p in c.ProductCategories)
+            //    {
+            //        Console.WriteLine($"product: {p.Id} - {p.ProductId} - {p.Product.Id} -{p.CategoryId} - {p.Category.Id} - {p.Product.Name}");
+            //    }
+
+            //    Console.WriteLine("-------------------");
+            //}
+
+            //Console.WriteLine("----ПРОЙДЕМСЯ ПО ПРОДУКТАМ--------");
+
+            //var products = db.Products
+            //    //.Include(pc=>pc.ProductCategories)
+            //    //.ThenInclude(c=>c.Category)
+            //    .ToList();
+
+            //foreach (var p in products)
+            //{
+            //    Console.WriteLine($"product: {p.Name} - {p.Price}");
+            //    Console.WriteLine("Id - ProductId - Product.Id - CategoryId - Category.Id - Name");
+
+            //    foreach (var c in p.ProductCategories)
+            //    {
+            //        Console.WriteLine($"category: {c.Id} - {c.ProductId} - {c.Product.Id} -{c.CategoryId} - {c.Category.Id} - {c.Category.Name}");
+            //    }
+
+            //    Console.WriteLine("-------------------");
+            //}
+
+
+            //Console.WriteLine("----ПРОЙДЕМСЯ ПО ПОКУПКАМ--------");
+
+            //var orders = db.Orders
+            //    .Include(po => po.ProductOrders)
+            //    .ThenInclude(p => p.Product)
+            //    .ToList();
+
+            //foreach (var o in orders)
+            //{
+            //    Console.WriteLine($"order: {o.BoughtOn} | {o.Buyer.Name} | Total");
+            //    Console.WriteLine("Id - Count- Price - Total - Product ");
+
+            //    foreach (var pc in o.ProductOrders)
+            //    {
+            //        var total = pc.Product.Price * pc.Count;
+            //        Console.WriteLine($"{pc.Id} - {pc.Count} - {pc.Product.Price} -{total} - {pc.Product.Name}");
+            //    }
+
+            //    Console.WriteLine("-------------------");
+            //}
+
+            //var productCount = db.Products.Count();
+            //Console.WriteLine($"Всего {productCount} товаров");
+
         }
 
         private static void SetBeginProductSetData(ShopContext db)
