@@ -24,7 +24,7 @@ namespace L5T1Migrations
                             .Select(pc => new
                             {
                                 productName = pc.Product.Name,
-                                countSales = pc.Product.ProductOrders.Sum(po=>po.Count)
+                                countSales = pc.Product.ProductOrders.Sum(po => po.Count)
                             })
                     }).ToList();
 

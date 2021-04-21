@@ -13,13 +13,7 @@ namespace L5T1Migrations.Models
         public string Phone { get; set; }
         public string Email { get; set; }
 
-        //private DateTime _birthday;
-
         public DateTime? Birthday { get; set; }
-        //{
-        //    get => _birthday.Date;
-        //    set => _birthday = value;
-        //}
 
         public virtual ICollection<Order> Orders { get; set; } = new List<Order>();
     }

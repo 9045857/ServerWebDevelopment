@@ -15,23 +15,23 @@ namespace L5T1Migrations
 
         private static void SetBeginProductSetData(ShopContext db)
         {
-            AddProduct(db, "Сок", new List<string> {"Питье"}, 50);
-            AddProduct(db, "Молоко", new List<string> {"Питье"}, 80);
-            AddProduct(db, "Вода", new List<string> {"Питье"}, 20);
-            AddProduct(db, "Кефир", new List<string> {"Питье", "Еда"}, 600);
-            AddProduct(db, "Суп", new List<string> {"Питье", "Еда"}, 15);
-            AddProduct(db, "Мясо", new List<string> {"Еда"}, 105);
-            AddProduct(db, "Сыр", new List<string> {"Еда"}, 505);
-            AddProduct(db, "Бублик", new List<string> {"Еда"}, 35);
-            AddProduct(db, "ЭнерджиГель", new List<string> {"Химия", "Питье", "Еда"}, 350);
-            AddProduct(db, "Сода", new List<string> {"Химия", "Еда"}, 1500);
-            AddProduct(db, "Мыло", new List<string> {"Химия"}, 300);
-            AddProduct(db, "Пемолюкс", new List<string> {"Химия"}, 750);
+            AddProduct(db, "Сок", new List<string> { "Питье" }, 50);
+            AddProduct(db, "Молоко", new List<string> { "Питье" }, 80);
+            AddProduct(db, "Вода", new List<string> { "Питье" }, 20);
+            AddProduct(db, "Кефир", new List<string> { "Питье", "Еда" }, 600);
+            AddProduct(db, "Суп", new List<string> { "Питье", "Еда" }, 15);
+            AddProduct(db, "Мясо", new List<string> { "Еда" }, 105);
+            AddProduct(db, "Сыр", new List<string> { "Еда" }, 505);
+            AddProduct(db, "Бублик", new List<string> { "Еда" }, 35);
+            AddProduct(db, "ЭнерджиГель", new List<string> { "Химия", "Питье", "Еда" }, 350);
+            AddProduct(db, "Сода", new List<string> { "Химия", "Еда" }, 1500);
+            AddProduct(db, "Мыло", new List<string> { "Химия" }, 300);
+            AddProduct(db, "Пемолюкс", new List<string> { "Химия" }, 750);
         }
 
         private static IEnumerable<Category> GetCategories(ShopContext db, IEnumerable<string> categoryNames)
         {
-            return categoryNames.Select(name => db.Categories.FirstOrDefault(c => c.Name == name) ?? new Category {Name = name}).ToList();
+            return categoryNames.Select(name => db.Categories.FirstOrDefault(c => c.Name == name) ?? new Category { Name = name }).ToList();
         }
 
         private static void AddProduct(ShopContext db, string productName, IEnumerable<string> categoryNames,
@@ -44,12 +44,12 @@ namespace L5T1Migrations
                 return;
             }
 
-            product = new Product {Name = productName, Price = price};
+            product = new Product { Name = productName, Price = price };
             var categories = GetCategories(db, categoryNames);
 
             foreach (var category in categories)
             {
-                var productCategory = new ProductCategory {Category = category, Product = product};
+                var productCategory = new ProductCategory { Category = category, Product = product };
                 product.ProductCategories.Add(productCategory);
             }
 
