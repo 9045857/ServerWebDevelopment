@@ -37,7 +37,9 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "L3T2Transactions", "L3T2Tra
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "L4T1ShopEF", "L4T1ShopEF\L4T1ShopEF.csproj", "{616715F6-92E0-4991-B709-B05D5DDCAA1B}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "L5T1Migrations", "L5T1Migrations\L5T1Migrations.csproj", "{735B56E2-56FF-475D-A693-D3069F79A5FF}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "L5T1Migrations", "L5T1Migrations\L5T1Migrations.csproj", "{735B56E2-56FF-475D-A693-D3069F79A5FF}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "L5T2UnitOfWork", "L5T2UnitOfWork\L5T2UnitOfWork.csproj", "{B40E26E3-FF24-4F35-A6EF-1BCBE0612765}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -117,6 +119,10 @@ Global
 		{735B56E2-56FF-475D-A693-D3069F79A5FF}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{735B56E2-56FF-475D-A693-D3069F79A5FF}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{735B56E2-56FF-475D-A693-D3069F79A5FF}.Release|Any CPU.Build.0 = Release|Any CPU
+		{B40E26E3-FF24-4F35-A6EF-1BCBE0612765}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{B40E26E3-FF24-4F35-A6EF-1BCBE0612765}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{B40E26E3-FF24-4F35-A6EF-1BCBE0612765}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{B40E26E3-FF24-4F35-A6EF-1BCBE0612765}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
