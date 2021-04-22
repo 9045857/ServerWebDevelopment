@@ -1,6 +1,7 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using System;
 using System.Linq;
+using L5T2UnitOfWork.Models;
 
 namespace L5T2UnitOfWork
 {
@@ -26,7 +27,7 @@ namespace L5T2UnitOfWork
             Console.WriteLine();
         }
 
-        public static void Products(ShopContext db)
+        public static void Products(L4ShopContext db)
         {
             var products = db.Products.FromSqlRaw("SELECT * FROM Products")
                 .ToList();
@@ -40,7 +41,7 @@ namespace L5T2UnitOfWork
             Console.WriteLine("- - - - - -");
         }
 
-        public static void CategoryProduct(ShopContext db)
+        public static void CategoryProduct(L4ShopContext db)
         {
             var categories = db.Categories
                 .Include(pc => pc.ProductCategories)

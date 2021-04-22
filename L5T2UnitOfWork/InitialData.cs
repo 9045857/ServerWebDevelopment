@@ -1,19 +1,19 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using L5T2UnitOfWork.Model;
+using L5T2UnitOfWork.Models;
 
 namespace L5T2UnitOfWork
 {
     internal class InitialData
     {
-        public static void GetInitialData(ShopContext db)
+        public static void GetInitialData(L4ShopContext db)
         {
             SetBeginProductSetData(db);
             SetBeginOrderBuyers(db);
         }
 
-        private static void SetBeginProductSetData(ShopContext db)
+        private static void SetBeginProductSetData(L4ShopContext db)
         {
             AddProduct(db, "Сок", new List<string> { "Питье" }, 50);
             AddProduct(db, "Молоко", new List<string> { "Питье" }, 80);
@@ -29,12 +29,12 @@ namespace L5T2UnitOfWork
             AddProduct(db, "Пемолюкс", new List<string> { "Химия" }, 750);
         }
 
-        private static IEnumerable<Category> GetCategories(ShopContext db, IEnumerable<string> categoryNames)
+        private static IEnumerable<Category> GetCategories(L4ShopContext db, IEnumerable<string> categoryNames)
         {
             return categoryNames.Select(name => db.Categories.FirstOrDefault(c => c.Name == name) ?? new Category { Name = name }).ToList();
         }
 
-        private static void AddProduct(ShopContext db, string productName, IEnumerable<string> categoryNames,
+        private static void AddProduct(L4ShopContext db, string productName, IEnumerable<string> categoryNames,
             decimal price)
         {
             var product = GetProduct(db, productName);
@@ -57,13 +57,13 @@ namespace L5T2UnitOfWork
             db.SaveChanges();
         }
 
-        private static Product GetProduct(ShopContext db, string productName)
+        private static Product GetProduct(L4ShopContext db, string productName)
         {
             return db.Products
                 .FirstOrDefault(p => p.Name == productName);
         }
 
-        private static void SetBeginOrderBuyers(ShopContext db)
+        private static void SetBeginOrderBuyers(L4ShopContext db)
         {
             var buyer1 = new Buyer
             {

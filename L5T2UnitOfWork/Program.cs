@@ -1,6 +1,7 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using System;
 using System.Linq;
+using L5T2UnitOfWork.Models;
 
 namespace L5T2UnitOfWork
 {
@@ -8,7 +9,7 @@ namespace L5T2UnitOfWork
     {
         private static void Main()
         {
-            using (var db = new ShopContext())
+            using (var db = new L4ShopContext())
             {
                 db.Database.EnsureDeleted();
                 db.Database.EnsureCreated();
@@ -38,7 +39,7 @@ namespace L5T2UnitOfWork
             }
         }
 
-        private static void SolveCategorySales(ShopContext db)
+        private static void SolveCategorySales(L4ShopContext db)
         {
             Console.WriteLine("ЗАДАНИЕ: Найдем сколько товаров каждой категории купили.");
 
@@ -61,7 +62,7 @@ namespace L5T2UnitOfWork
             PrintConsole.BlockEndBreak();
         }
 
-        private static void SolveExpenses(ShopContext db)
+        private static void SolveExpenses(L4ShopContext db)
         {
             Console.WriteLine("ЗАДАНИЕ: Найдем сколько каждый клиент потратил денег за все время.");
 
@@ -84,7 +85,7 @@ namespace L5T2UnitOfWork
             PrintConsole.BlockEndBreak();
         }
 
-        private static void SolveBestsellerSearch(ShopContext db)
+        private static void SolveBestsellerSearch(L4ShopContext db)
         {
             Console.WriteLine("ЗАДАНИЕ: Найдем самый часто покупаемый товар");
 
@@ -106,7 +107,7 @@ namespace L5T2UnitOfWork
             PrintConsole.BlockEndBreak();
         }
 
-        private static void SolveDeletingProduct(ShopContext db)
+        private static void SolveDeletingProduct(L4ShopContext db)
         {
             Console.WriteLine("ЗАДАНИЕ: Удалим 'Сок'");
             PrintConsole.Break();
@@ -150,7 +151,7 @@ namespace L5T2UnitOfWork
             }
         }
 
-        private static void SolveEditingProduct(ShopContext db)
+        private static void SolveEditingProduct(L4ShopContext db)
         {
             Console.WriteLine("ЗАДАНИЕ: Изменим стоимость 'Сок' на 345");
             PrintConsole.Break();
@@ -180,7 +181,7 @@ namespace L5T2UnitOfWork
             PrintConsole.Break();
         }
 
-        private static void SolveSearchingProductName(ShopContext db)
+        private static void SolveSearchingProductName(L4ShopContext db)
         {
             Console.WriteLine("ЗАДАНИЕ: Поиск покупателей товара 'Мясо'");
             PrintConsole.Break();
@@ -204,6 +205,6 @@ namespace L5T2UnitOfWork
             PrintConsole.BlockEnd();
         }
 
-       
+
     }
 }
