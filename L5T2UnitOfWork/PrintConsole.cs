@@ -22,7 +22,7 @@ namespace L5T2UnitOfWork
         public static void Break()
         {
             Console.WriteLine();
-            Console.WriteLine("нажми любую клавишу...");
+            Console.WriteLine("Press any key...");
             Console.ReadKey();
             Console.WriteLine();
         }

@@ -12,7 +12,7 @@ namespace L5T2UnitOfWork
             using (var db = new L4ShopContext())
             {
                 db.Database.EnsureDeleted();
-                db.Database.EnsureCreated();
+                db.Database.Migrate();
 
                 //-Через EF заполните эту БД данными 
                 InitialData.GetInitialData(db);
