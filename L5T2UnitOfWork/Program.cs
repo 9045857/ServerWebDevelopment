@@ -2,6 +2,7 @@
 using System;
 using System.Linq;
 using L5T2UnitOfWork.Models;
+using L5T2UnitOfWork.Repositories;
 
 namespace L5T2UnitOfWork
 {
@@ -19,23 +20,25 @@ namespace L5T2UnitOfWork
 
                 //-Попробуйте поиск, редактирование, удаление данных
                 //search 
-                SolveSearchingProductName(db);
+                //SolveSearchingProductName(db);
 
-                //edit
-                SolveEditingProduct(db);
+                ////edit
+                //SolveEditingProduct(db);
 
-                //delete
-                SolveDeletingProduct(db);
+                ////delete
+                //SolveDeletingProduct(db);
 
-                //При помощи LINQ
-                //•Найти самый часто покупаемый товар
-                SolveBestsellerSearch(db);
+                ////При помощи LINQ
+                ////•Найти самый часто покупаемый товар
+                //SolveBestsellerSearch(db);
 
                 //•Найти сколько каждый клиент потратил денег за все время
-                SolveExpenses(db);
+                var br = new BuyerRepository(db);
+                PrintConsole.ShowBuyersExpenses(br.GetEachExpenses());
 
                 //•Вывести сколько товаров каждой категории купили
-                SolveCategorySales(db);
+                var cr = new CategoryRepository(db);
+                PrintConsole.ShowCategorySales(cr.GetCategoriesSales());
             }
         }
 
@@ -43,47 +46,29 @@ namespace L5T2UnitOfWork
         {
             Console.WriteLine("ЗАДАНИЕ: Найдем сколько товаров каждой категории купили.");
 
-            var categoryProductsBought = db.Categories
-                .Select(c => new
-                {
-                    c.Name,
-                    boughtProductsCount = c.ProductCategories
-                        .Select(pc => pc.Product)
-                        .SelectMany(p => p.ProductOrders)
-                        .Select(po => po.Count).Sum()
-                });
+            //var categoryProductsBought = db.Categories
+            //    .Select(c => new
+            //    {
+            //        c.Name,
+            //        boughtProductsCount = c.ProductCategories
+            //            .Select(pc => pc.Product)
+            //            .SelectMany(p => p.ProductOrders)
+            //            .Select(po => po.Count).Sum()
+            //    });
 
-            Console.WriteLine("Кол-во купленных товаров  /  Категория");
-            foreach (var category in categoryProductsBought)
-            {
-                Console.WriteLine($"{category.boughtProductsCount}   {category.Name} ");
-            }
+            //using (var br = new BuyerRepository(db))
+            //{
+            //    Console.WriteLine("Кол-во купленных товаров  /  Категория");
 
-            PrintConsole.BlockEndBreak();
+            //    foreach (var (key, value) in br.GetEachExpenses())
+            //    {
+            //        Console.WriteLine($"{value}   {key} ");
+            //    }
+
+            //    PrintConsole.BlockEndBreak();
+            //}
         }
 
-        private static void SolveExpenses(L4ShopContext db)
-        {
-            Console.WriteLine("ЗАДАНИЕ: Найдем сколько каждый клиент потратил денег за все время.");
-
-            var totalCosts = db.Buyers
-                .Select(b => new
-                {
-                    name = b.Name,
-                    costs = b.Orders
-                        .SelectMany(o => o.ProductOrders)
-                        .Select(po => po.Product.Price * po.Count)
-                        .Sum()
-                });
-
-            Console.WriteLine("Сумма        Клиент");
-            foreach (var buyerCosts in totalCosts)
-            {
-                Console.WriteLine($" {buyerCosts.costs}   {buyerCosts.name}");
-            }
-
-            PrintConsole.BlockEndBreak();
-        }
 
         private static void SolveBestsellerSearch(L4ShopContext db)
         {
