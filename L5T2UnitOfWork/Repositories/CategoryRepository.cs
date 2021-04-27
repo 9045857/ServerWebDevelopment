@@ -13,18 +13,18 @@ namespace L5T2UnitOfWork.Repositories
         {
         }
 
-        public Dictionary<string, int> GetCategoriesSales()
+        public Dictionary<Category, int> GetCategoriesSales()
         {
             return DbSet
                 .Select(c => new
                 {
-                    c.Name,
+                    c,
                     salesProductsCount = c.ProductCategories
                         .Select(pc => pc.Product)
                         .SelectMany(p => p.ProductOrders)
                         .Select(po => po.Count).Sum()
                 })
-                .ToDictionary(x => x.Name, x => x.salesProductsCount);
+                .ToDictionary(x => x.c, x => x.salesProductsCount);
         }
     }
 }

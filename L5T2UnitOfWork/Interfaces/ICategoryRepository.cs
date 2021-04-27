@@ -7,6 +7,6 @@ namespace L5T2UnitOfWork.Interfaces
 {
     public interface ICategoryRepository:IRepository<Category>
     {
-        Dictionary<string, int> GetCategoriesSales();
+        Dictionary<Category, int> GetCategoriesSales();
     }
 }

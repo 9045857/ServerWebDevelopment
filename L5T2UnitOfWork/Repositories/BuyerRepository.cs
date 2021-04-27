@@ -13,7 +13,7 @@ namespace L5T2UnitOfWork.Repositories
         {
         }
 
-        public Dictionary<string, decimal?> GetEachExpenses()
+        public Dictionary<Buyer, decimal?> GetEachExpenses()
         {
             //return DbSet.
             //    ToDictionary(b => b.Name,
@@ -27,12 +27,12 @@ namespace L5T2UnitOfWork.Repositories
             ////      .Sum())).ToDictionary(x=>x.Key,x=>x.Value);
             return DbSet.Select(b => new
                 {
-                    b.Name,
+                    b,
                     expense = b.Orders.SelectMany(o => o.ProductOrders)
                         .Select(po => po.Product.Price * po.Count)
                         .Sum()
                 })
-                .ToDictionary(x => x.Name, x => x.expense);
+                .ToDictionary(x => x.b, x => x.expense);
         }
     }
 }
