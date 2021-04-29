@@ -14,7 +14,7 @@ namespace L2T3UnitTest
         {
             var vector = new Vector(2, new[] { 3.0, 4.0 });
 
-            Assert.IsTrue(Math.Abs(vector.GetLength() - 5) < Epsilon, "Должно быть 5");
+            Assert.AreEqual(5, vector.GetLength(), Epsilon);
         }
 
         [TestMethod]
@@ -22,7 +22,7 @@ namespace L2T3UnitTest
         {
             var vector = new Vector(4, new[] { 1.0, 1.0, 3.0, 4.0 });
 
-            Assert.IsTrue(Math.Abs(vector.GetSize() - 4) < Epsilon, "Должно быть 4");
+            Assert.AreEqual(4, vector.GetSize(), Epsilon);
         }
 
         [TestMethod]
@@ -31,7 +31,7 @@ namespace L2T3UnitTest
             var vector1 = new Vector(2, new[] { 2.0, 2.0 });
             var vector2 = new Vector(2, new[] { 3.0, 3.0 });
 
-            Assert.IsTrue(Math.Abs(Vector.GetScalarProduct(vector1, vector2) - 12) < Epsilon, "Должно быть 12");
+            Assert.AreEqual(12, Vector.GetScalarProduct(vector1, vector2), Epsilon);
         }
 
         [TestMethod]
