@@ -93,10 +93,10 @@ namespace L3T2Transactions
                 var deletingTransaction = connection.BeginTransaction();
                 try
                 {
-                    var sql = $"DELETE {TableName} " +
-                              "WHERE Name=N'ИсключениеБезТранзакции' " +
-                              "OR Name=N'Транзакция' " +
-                              "OR Name=N'Исключение'";
+                    var sql = $@"DELETE {TableName} 
+                                       WHERE Name=N'ИсключениеБезТранзакции' 
+                                       OR Name=N'Транзакция' 
+                                       OR Name=N'Исключение'";
 
                     var command = new SqlCommand(sql, connection);
                     command.Transaction = deletingTransaction;
