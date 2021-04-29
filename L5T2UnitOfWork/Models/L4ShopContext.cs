@@ -91,7 +91,8 @@ namespace L5T2UnitOfWork.Models
                     .IsRequired()
                     .HasMaxLength(100);
 
-                entity.Property(e => e.Price).HasColumnType("decimal(10, 2)");
+                entity.Property(e => e.Price)
+                    .HasColumnType("decimal(10, 2)");
             });
 
             OnModelCreatingPartial(modelBuilder);

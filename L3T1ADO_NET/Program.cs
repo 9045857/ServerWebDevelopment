@@ -4,19 +4,7 @@ using System.Data;
 
 namespace L3T1ADO_NET
 {
-    internal class Product
-    {
-        public string Name { get; set; }
-        public float Price { get; set; }
-
-        public Product(string name, float price)
-        {
-            Name = name;
-            Price = price;
-        }
-    }
-
-    internal class Program
+   internal class Program
     {
         private const int SpaceId = -5;
         private const int SpaceName = -35;
