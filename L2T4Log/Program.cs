@@ -3,9 +3,9 @@ using NLog;
 
 namespace L2T4Log
 {
-    class Program
+    internal class Program
     {
-        static void Main(string[] args)
+        private static void Main()
         {
             var logger = LogManager.GetCurrentClassLogger();
 
@@ -27,7 +27,7 @@ namespace L2T4Log
 
                 try
                 {
-                    if (int.TryParse(word, out var number) & word != exitWord)
+                    if (int.TryParse(word, out var number) && word != exitWord)
                     {
                         logger.Debug($"Ввели число типа int: {number}");
 
@@ -41,7 +41,7 @@ namespace L2T4Log
                 }
                 catch (Exception e)
                 {
-                    logger.Error(e,$"Вводилось значение: \"{word}\"" );
+                    logger.Error(e, $"Вводилось значение: \"{word}\"");
 
                     Console.WriteLine(e.Message);
                 }

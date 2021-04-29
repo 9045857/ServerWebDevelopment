@@ -6,6 +6,7 @@ namespace L2T4Log
     public class NumberWord
     {
         public int Number { get; set; }
+
         public string Word { get; set; }
 
         public NumberWord(int number)
