@@ -12,7 +12,6 @@ namespace L5T1Migrations.Models
         [Required]
         public DateTime BoughtOn { get; set; }
 
-
         public int BuyerId { get; set; }
 
         [Required]

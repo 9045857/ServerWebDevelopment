@@ -3,13 +3,18 @@ using Microsoft.EntityFrameworkCore;
 
 namespace L5T1Migrations
 {
-    public class ShopContext:DbContext
+    public class ShopContext : DbContext
     {
         public DbSet<Category> Categories { get; set; }
+
         public DbSet<Product> Products { get; set; }
+
         public DbSet<Buyer> Buyers { get; set; }
+
         public DbSet<Order> Orders { get; set; }
+
         public DbSet<ProductCategory> ProductCategories { get; set; }
+
         public DbSet<ProductOrder> ProductOrders { get; set; }
 
         protected override void OnConfiguring(DbContextOptionsBuilder options)
