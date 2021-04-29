@@ -1,5 +1,6 @@
-﻿using L5T2UnitOfWork.Models;
-using L5T2UnitOfWork.Repositories;
+﻿using L5T2UnitOfWork.Interfaces;
+using L5T2UnitOfWork.Models;
+using L5T2UnitOfWork.Services;
 using Microsoft.EntityFrameworkCore;
 
 namespace L5T2UnitOfWork
@@ -8,8 +9,15 @@ namespace L5T2UnitOfWork
     {
         private static void Main()
         {
-            using (var db = new L4ShopContext())
+            using (var uow = new UnitOfWork(new L4ShopContext()))
             {
+                var productRepo = uow.GetRepository<IProductRepository>();
+                var categoryRepo = uow.GetRepository<ICategoryRepository>();
+                var buyerRepo = uow.GetRepository<IBuyerRepository>();
+                var orderRepo = uow.GetRepository<IOrderRepository>();
+
+
+                
                 db.Database.EnsureDeleted();
                 db.Database.Migrate();
 

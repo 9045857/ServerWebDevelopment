@@ -4,7 +4,7 @@ using System.Text;
 
 namespace L5T2UnitOfWork.Interfaces
 {
-    public interface IRepository<T> where T:class
+    public interface IRepository<T>: IRepo where T:class
     {
         void Create(T entity);
 

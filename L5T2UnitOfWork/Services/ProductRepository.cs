@@ -1,11 +1,10 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Linq;
 using L5T2UnitOfWork.Interfaces;
 using L5T2UnitOfWork.Models;
 using Microsoft.EntityFrameworkCore;
 
-namespace L5T2UnitOfWork.Repositories
+namespace L5T2UnitOfWork.Services
 {
     public class ProductRepository : BaseEfRepository<Product>, IProductRepository
     {

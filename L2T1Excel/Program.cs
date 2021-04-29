@@ -11,7 +11,7 @@ namespace L2T1Excel
     {
         private static void Main()
         {
-            var people = new List<Person>()
+            var people = new List<Person>
             {
                 new Person("Иван", "Иванов", 1, "111111111"),
                 new Person("Семен", "Семенов", 2, "2222222"),
@@ -111,7 +111,7 @@ namespace L2T1Excel
             var sheet = title.Worksheet;
             var table = sheet.Cells[topRow, leftColumn, bottomRow, rightColumn];
 
-            table.Style.Border.BorderAround(ExcelBorderStyle.Medium,Color.CornflowerBlue);
+            table.Style.Border.BorderAround(ExcelBorderStyle.Medium, Color.CornflowerBlue);
         }
 
         private static void CreateXlsx(List<Person> people)
@@ -146,7 +146,7 @@ namespace L2T1Excel
 
                 title.LoadFromArrays(new[]
                 {
-                        new[] { "Имя", "Фамилия", "Возраст", "Телефон" }
+                    new[] { "Имя", "Фамилия", "Возраст", "Телефон" }
                 });
 
                 SetTitleStyle(title);
@@ -159,7 +159,7 @@ namespace L2T1Excel
 
                 SetPeopleTableStyle(peopleTableRange);
 
-                SetCommonTableFeatures(title,peopleTableRange);
+                SetCommonTableFeatures(title, peopleTableRange);
 
                 try
                 {
@@ -174,8 +174,7 @@ namespace L2T1Excel
             }
         }
 
-        private static void SetPeopleTable(List<Person> people, int row, ExcelWorksheet worksheet, int nameColumn, int surnameColumn,
-            int ageColumn, int phoneColumn)
+        private static void SetPeopleTable(List<Person> people, int row, ExcelWorksheet worksheet, int nameColumn, int surnameColumn, int ageColumn, int phoneColumn)
         {
             foreach (var person in people)
             {

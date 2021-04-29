@@ -1,11 +1,10 @@
-﻿using System;
+﻿using System.Linq;
 using L5T2UnitOfWork.Interfaces;
 using Microsoft.EntityFrameworkCore;
-using System.Linq;
 
-namespace L5T2UnitOfWork.Repositories
+namespace L5T2UnitOfWork.Services
 {
-    public class BaseEfRepository<T> : IRepository<T> where T : class
+    public class BaseEfRepository<T> : IRepository<T> where T : class, IRepo
     {
         protected DbContext Db;
         protected DbSet<T> DbSet;
