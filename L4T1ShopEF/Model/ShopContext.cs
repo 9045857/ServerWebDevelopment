@@ -2,7 +2,7 @@
 
 namespace L4T1ShopEF.Model
 {
-    internal sealed class ShopContext : DbContext
+    public sealed class ShopContext : DbContext
     {
         public DbSet<Category> Categories { get; set; }
 
