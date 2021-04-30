@@ -154,9 +154,10 @@ namespace L4T1ShopEF
         {
             const string productName = "Мясо";
             var product = db.Products
-                .Include(o => o.ProductOrders)
+                .Include(p => p.ProductOrders)
                     .ThenInclude(po => po.Order)
-                    .FirstOrDefault(p => p.Name == productName);
+                    .ThenInclude(o=>o.Buyer)
+                .FirstOrDefault(p => p.Name == productName);
 
             PrintConsole.ShowSalesProduct(product, productName);
         }
