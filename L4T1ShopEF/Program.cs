@@ -19,7 +19,7 @@ namespace L4T1ShopEF
 
                 //-Попробуйте поиск, редактирование, удаление данных
                 //search 
-                SolveSearchingProductName(db);
+                SolveSearchingSalesProduct(db);
 
                 //edit
                 SolveEditingProduct(db);
@@ -56,15 +56,14 @@ namespace L4T1ShopEF
 
         private static void SolveExpenses(ShopContext db)
         {
-          var totalCosts = db.Buyers
-                .Select(b => new
-                {
-                    name = b.Name,
-                    costs = b.Orders
-                        .SelectMany(o => o.ProductOrders)
-                        .Sum(po => po.Product.Price * po.Count)
-                });
-
+            var totalCosts = db.Buyers
+                  .Select(b => new
+                  {
+                      name = b.Name,
+                      costs = b.Orders
+                          .SelectMany(o => o.ProductOrders)
+                          .Sum(po => po.Product.Price * po.Count)
+                  });
 
             PrintConsole.ShowExpenses(totalCosts);
         }
@@ -75,7 +74,7 @@ namespace L4T1ShopEF
                 .Include(p => p.ProductOrders)
                 .Where(p =>
                     p.ProductOrders
-                     .Sum(po => po.Count) 
+                     .Sum(po => po.Count)
                       == db.Products
                            .Select(p1 => p1.ProductOrders
                                                   .Sum(po1 => po1.Count))
@@ -150,13 +149,13 @@ namespace L4T1ShopEF
             PrintConsole.ShowProductPriceChanges(product, oldPrice, newPrice);
         }
 
-        private static void SolveSearchingProductName(ShopContext db)
+        private static void SolveSearchingSalesProduct(ShopContext db)
         {
             const string productName = "Мясо";
             var product = db.Products
                 .Include(p => p.ProductOrders)
                     .ThenInclude(po => po.Order)
-                    .ThenInclude(o=>o.Buyer)
+                    .ThenInclude(o => o.Buyer)
                 .FirstOrDefault(p => p.Name == productName);
 
             PrintConsole.ShowSalesProduct(product, productName);

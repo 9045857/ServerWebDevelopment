@@ -1,8 +1,7 @@
-﻿using System;
+﻿using L4T1ShopEF.Model;
+using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using L4T1ShopEF.Model;
 
 namespace L4T1ShopEF
 {
@@ -198,7 +197,7 @@ namespace L4T1ShopEF
                 },
                 new ProductOrder
                 {
-                    Count = 4,
+                    Count = 6,
                     Product = GetProduct(db, "Бублик")
                 },
                 new ProductOrder
