@@ -144,7 +144,7 @@ namespace L4T1ShopEF
 
             foreach (var product in bestsellers)
             {
-                Console.WriteLine($"{product.Name}");
+                Console.WriteLine($"\t{product.Name}");
             }
 
             Console.WriteLine("-------------------------");
