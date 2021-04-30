@@ -56,15 +56,15 @@ namespace L4T1ShopEF
 
         private static void SolveExpenses(ShopContext db)
         {
-            var totalCosts = db.Buyers
-                  .Select(b => new
-                  {
-                      name = b.Name,
-                      costs = b.Orders
-                          .SelectMany(o => o.ProductOrders)
-                          .Select(po => po.Product.Price * po.Count)
-                          .Sum()
-                  });
+          var totalCosts = db.Buyers
+                .Select(b => new
+                {
+                    name = b.Name,
+                    costs = b.Orders
+                        .SelectMany(o => o.ProductOrders)
+                        .Sum(po => po.Product.Price * po.Count)
+                });
+
 
             PrintConsole.ShowExpenses(totalCosts);
         }
@@ -75,14 +75,12 @@ namespace L4T1ShopEF
                 .Include(p => p.ProductOrders)
                 .Where(p =>
                     p.ProductOrders
-                     .Sum(po =>
-                        po.Count) == db.Products
-                                       .Select(p1 =>
-                                           p1.ProductOrders
-                                             .Sum(po1 =>
-                                                  po1.Count))
-                                       .OrderByDescending(s => s)
-                                       .First())
+                     .Sum(po => po.Count) 
+                      == db.Products
+                           .Select(p1 => p1.ProductOrders
+                                                  .Sum(po1 => po1.Count))
+                           .OrderByDescending(s => s)
+                           .First())
                 .ToList();
 
             var salesCount = bestsellers[0].ProductOrders.Sum(po => po.Count);

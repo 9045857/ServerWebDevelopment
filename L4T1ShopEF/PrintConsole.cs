@@ -27,43 +27,7 @@ namespace L4T1ShopEF
             Console.ReadKey();
             Console.WriteLine();
         }
-
-        private static void PrintProducts(ShopContext db)
-        {
-            var products = db.Products.FromSqlRaw("SELECT * FROM Products")
-                .ToList();
-
-            Console.WriteLine("База ПРОДУКТОВ: ");
-            foreach (var p in products)
-            {
-                Console.WriteLine($"  {p.Price}      {p.Name}");
-            }
-
-            Console.WriteLine("- - - - - -");
-        }
-
-        private static void PrintCategoryProduct(ShopContext db)
-        {
-            var categories = db.Categories
-                .Include(pc => pc.ProductCategories)
-                .ThenInclude(p => p.Product)
-                .ToList();
-
-            foreach (var c in categories)
-            {
-                Console.WriteLine($"Category: {c.Name}");
-
-                Console.WriteLine("   Цена           Название");
-
-                foreach (var p in c.ProductCategories)
-                {
-                    Console.WriteLine($"  {p.Product.Price}      {p.Product.Name}");
-                }
-
-                Console.WriteLine("- - - - - -");
-            }
-        }
-
+        
         public static void ShowCategorySales(IQueryable<dynamic> categoryProductsBought)
         {
             Console.WriteLine("ЗАДАНИЕ: Найдем сколько товаров каждой категории купили.");
