@@ -38,7 +38,7 @@ namespace L3T1ADO_NET
 
         public static void CreateTables(SqlConnection connection)
         {
-            var queryCategory = $@"CREATE TABLE[dbo].[Category] (
+            const string queryCategory = @"CREATE TABLE[dbo].[Category] (
                                          Id int IDENTITY(1,1) NOT NULL, 
                                          Name nvarchar (100) NOT NULL,
                                          CONSTRAINT PK_Categories PRIMARY KEY(Id))";
@@ -48,7 +48,7 @@ namespace L3T1ADO_NET
                 cmd.ExecuteNonQuery();
             }
 
-            var queryProduct = $@"CREATE TABLE[dbo].[Product] (
+            const string queryProduct = @"CREATE TABLE[dbo].[Product] (
                                         Id int IDENTITY(1,1) NOT NULL, 
                                         Name nvarchar (100) NOT NULL,
                                         Price decimal (18, 2) NOT NULL,
