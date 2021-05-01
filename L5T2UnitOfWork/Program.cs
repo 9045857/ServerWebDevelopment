@@ -9,50 +9,63 @@ namespace L5T2UnitOfWork
     {
         private static void Main()
         {
+            using (var db = new L4ShopContext())
+            {
+                db.Database.EnsureDeleted();
+                db.Database.Migrate();
+
+                InitialData.LoadInDb(db);
+            }
+
             using (var uow = new UnitOfWork(new L4ShopContext()))
             {
                 var productRepo = uow.GetRepository<IProductRepository>();
                 var categoryRepo = uow.GetRepository<ICategoryRepository>();
                 var buyerRepo = uow.GetRepository<IBuyerRepository>();
-                var orderRepo = uow.GetRepository<IOrderRepository>();
-
-
-                
-                db.Database.EnsureDeleted();
-                db.Database.Migrate();
-
-                //-Через EF заполните эту БД данными 
-                InitialData.GetInitialData(db);
 
                 //-Попробуйте поиск, редактирование, удаление данных
                 //search 
-                var pr = new ProductRepository(db);
+                const string searchedProduct = "Сок";
+                var buyersBuysCount = productRepo.GetBuyersBuysCount(searchedProduct);
 
-                const string searchedProduct = "МясО";
-                PrintConsole.ShowBuyersBuysCount(pr.GetBuyersBuysCount(searchedProduct), searchedProduct);
+                PrintConsole.ShowBuyersBuysCount(buyersBuysCount, searchedProduct);
 
                 //edit
+                const string oldProductName = "МясО";
+
+                var product = productRepo.GetByName(oldProductName);
+                var oldName = product.Name;
+
                 const string newProductName = "Животный белок";
-                PrintConsole.ShowProductNameChanges(pr, searchedProduct, newProductName);
+                productRepo.SetName(product, newProductName);
+
+                PrintConsole.ShowProductNameChanges(productRepo.GetByName(newProductName), oldName, newProductName);
 
                 //delete
                 const string deletedProductName = "Сок";
-                pr.Delete(pr.GetByName(deletedProductName));
-                pr.Save();
+                product = productRepo.GetByName(deletedProductName);
 
-                PrintConsole.ShowProductsAfterDelete(pr, deletedProductName);
+                productRepo.Delete(product);
+                uow.Save();
+
+                var products = productRepo.GetAll();
+                PrintConsole.ShowProductsAfterDelete(products, deletedProductName);
+
+                const string buyerName = "Иванов Иван Иваныч";
+                var buyer = buyerRepo.GetByName(buyerName);
+
+                var buyerProducts = buyerRepo.GetProducts(buyer);
+                PrintConsole.ShowBuyerProducts(buyer, buyerProducts);
 
                 //При помощи LINQ
                 //•Найти самый часто покупаемый товар
-                PrintConsole.ShowProducts(pr.GetBestseller(), pr.GetMaxCountSales());
+                PrintConsole.ShowProducts(productRepo.GetBestseller(), productRepo.GetMaxCountSales());
 
                 //•Найти сколько каждый клиент потратил денег за все время
-                var br = new BuyerRepository(db);
-                PrintConsole.ShowBuyersExpenses(br.GetEachExpenses());
+                PrintConsole.ShowBuyersExpenses(buyerRepo.GetEachExpenses());
 
                 //•Вывести сколько товаров каждой категории купили
-                var cr = new CategoryRepository(db);
-                PrintConsole.ShowCategorySales(cr.GetCategoriesSales());
+                PrintConsole.ShowCategorySales(categoryRepo.GetCategoriesSales());
             }
         }
     }

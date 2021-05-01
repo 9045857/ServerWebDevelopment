@@ -15,6 +15,7 @@ namespace L5T2UnitOfWork.Services
         public List<Product> GetBestseller()
         {
             return DbSet
+                .Include(p=>p.ProductOrders)
                 .Where(p => p
                                 .ProductOrders
                                 .Select(po => po.Count)
@@ -32,6 +33,7 @@ namespace L5T2UnitOfWork.Services
         public int GetMaxCountSales()
         {
             return DbSet
+                .Include(p=>p.ProductOrders)
                 .Select(p => p
                     .ProductOrders
                     .Select(po => po.Count)
@@ -44,7 +46,8 @@ namespace L5T2UnitOfWork.Services
         {
             return DbSet
                 .Include(o => o.ProductOrders)
-                .ThenInclude(po => po.Order)
+                    .ThenInclude(po => po.Order)
+                    .ThenInclude(o=>o.Buyer)
                 .FirstOrDefault(p => EF.Functions.Like(p.Name, productName))
                 ?.ProductOrders
                 .Select(po => po.Order.Buyer)

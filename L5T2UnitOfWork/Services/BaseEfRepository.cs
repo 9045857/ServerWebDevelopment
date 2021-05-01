@@ -4,7 +4,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace L5T2UnitOfWork.Services
 {
-    public class BaseEfRepository<T> : IRepository<T> where T : class, IRepo
+    public class BaseEfRepository<T> : IRepository<T> where T : class
     {
         protected DbContext Db;
         protected DbSet<T> DbSet;

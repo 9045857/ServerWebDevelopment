@@ -7,7 +7,7 @@ namespace L5T2UnitOfWork
 {
     internal class InitialData
     {
-        public static void GetInitialData(L4ShopContext db)
+        public static void LoadInDb(L4ShopContext db)
         {
             SetBeginProductSetData(db);
             SetBeginOrderBuyers(db);

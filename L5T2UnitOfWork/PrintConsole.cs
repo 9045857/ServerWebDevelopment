@@ -1,7 +1,7 @@
 ﻿using L5T2UnitOfWork.Models;
 using System;
 using System.Collections.Generic;
-using L5T2UnitOfWork.Services;
+using System.Linq;
 
 namespace L5T2UnitOfWork
 {
@@ -14,33 +14,28 @@ namespace L5T2UnitOfWork
             Console.WriteLine();
         }
 
-        public static void ShowProductsAfterDelete(ProductRepository pr, string deletedProduct)
+        public static void ShowProductsAfterDelete(Product[] products, string deletedProduct)
         {
             Console.WriteLine($"ЗАДАНИЕ: Удалим из списка продуктов {deletedProduct}.");
             Console.WriteLine("СПИСОК ПРОДУКTOB");
 
-            foreach (var product in pr.GetAll())
+            foreach (var product in products)
             {
-                Console.WriteLine(product.Name);
+                Console.WriteLine($"    {product.Name}");
             }
 
             PressAnyKey();
         }
 
-        public static void ShowProductNameChanges(ProductRepository pr, string currentName, string newName)
+        public static void ShowProductNameChanges(/*ProductRepository pr*/Product product, string oldName, string newName)
         {
-            var product = pr.GetByName(currentName);
-
             if (product == null)
             {
+                Console.WriteLine($"Продукт '{newName}' не найден.");
                 return;
             }
 
-            var oldName = product.Name;
-
-            pr.SetName(product, newName);
-
-            Console.WriteLine($"ЗАДАНИЕ: Изменим имя у продукта 'Мясо'.");
+            Console.WriteLine($"ЗАДАНИЕ: Изменим имя у продукта '{oldName}'.");
 
             const int firstColumnWidth = 10;
             const int secondColumnWidth = 15;
@@ -93,13 +88,19 @@ namespace L5T2UnitOfWork
 
         private static void ShowSolutionTable(IEnumerable<Product> products, int salesCount, string caption, string firstColumn, string secondColumn)
         {
-            var productsSales = new Dictionary<Product, int>();
-            foreach (var product in products)
-            {
-                productsSales.Add(product, salesCount);
-            }
+            var productsSales = products.ToDictionary(product => product, product => salesCount);
 
             ShowSolutionTable(productsSales, caption, firstColumn, secondColumn);
+        }
+
+        public static void ShowBuyerProducts(Buyer buyer, Dictionary<Product, int> products)
+        {
+            Console.WriteLine($"Покупатель: {buyer.Name}");
+
+            foreach (var pto in products)
+            {
+                Console.WriteLine($" {pto.Value} шт.   {pto.Key.Name}");
+            }
         }
 
         private static void ShowSolutionTable<TKey, TValue>(Dictionary<TKey, TValue> keyValues, string caption, string firstColumn, string secondColumn)
