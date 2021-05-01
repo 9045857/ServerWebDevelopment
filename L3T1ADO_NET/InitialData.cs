@@ -18,6 +18,7 @@ namespace L3T1ADO_NET
                 using (var cmd = new SqlCommand(query, connection))
                 {
                     cmd.ExecuteNonQuery();
+
                     Console.WriteLine("** Database Deleted Successfully");
                 }
             }
@@ -28,9 +29,11 @@ namespace L3T1ADO_NET
             finally
             {
                 var query = $"CREATE Database {dbName}";
+
                 using (var cmd = new SqlCommand(query, connection))
                 {
                     cmd.ExecuteNonQuery();
+
                     Console.WriteLine("** Database Created Successfully");
                 }
             }
@@ -41,7 +44,7 @@ namespace L3T1ADO_NET
             const string queryCategory = @"CREATE TABLE[dbo].[Category] (
                                          Id int IDENTITY(1,1) NOT NULL, 
                                          Name nvarchar (100) NOT NULL,
-                                         CONSTRAINT PK_Categories PRIMARY KEY(Id))";
+                                         CONSTRAINT PK_Category PRIMARY KEY(Id))";
 
             using (var cmd = new SqlCommand(queryCategory, connection))
             {
@@ -53,7 +56,7 @@ namespace L3T1ADO_NET
                                         Name nvarchar (100) NOT NULL,
                                         Price decimal (18, 2) NOT NULL,
 	                                    CategoryId int NOT NULL,
-                                        CONSTRAINT PK_Products PRIMARY KEY (Id),
+                                        CONSTRAINT PK_Product PRIMARY KEY (Id),
                                         CONSTRAINT FK_Category_Id FOREIGN KEY (CategoryId) REFERENCES dbo.Category (Id))";
 
             using (var cmd = new SqlCommand(queryProduct, connection))
