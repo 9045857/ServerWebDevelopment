@@ -1,10 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-
-namespace L5T2UnitOfWork.Interfaces
+﻿namespace L5T2UnitOfWork.Interfaces
 {
-    public interface IRepository<T>: IRepo where T:class
+    public interface IRepository<T> : IRepo where T : class
     {
         void Create(T entity);
 
@@ -14,6 +10,6 @@ namespace L5T2UnitOfWork.Interfaces
 
         T[] GetAll();
 
-        T GetById (int id);
+        T GetById(int id);
     }
 }

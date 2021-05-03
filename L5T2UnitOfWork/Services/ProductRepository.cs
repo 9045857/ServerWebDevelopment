@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using L5T2UnitOfWork.Interfaces;
 using L5T2UnitOfWork.Models;
@@ -15,7 +16,7 @@ namespace L5T2UnitOfWork.Services
         public List<Product> GetBestseller()
         {
             return DbSet
-                .Include(p=>p.ProductOrders)
+                .Include(p => p.ProductOrders)
                 .Where(p => p
                                 .ProductOrders
                                 .Select(po => po.Count)
@@ -33,7 +34,7 @@ namespace L5T2UnitOfWork.Services
         public int GetMaxCountSales()
         {
             return DbSet
-                .Include(p=>p.ProductOrders)
+                .Include(p => p.ProductOrders)
                 .Select(p => p
                     .ProductOrders
                     .Select(po => po.Count)
@@ -47,9 +48,9 @@ namespace L5T2UnitOfWork.Services
             return DbSet
                 .Include(o => o.ProductOrders)
                     .ThenInclude(po => po.Order)
-                    .ThenInclude(o=>o.Buyer)
-                .FirstOrDefault(p => EF.Functions.Like(p.Name, productName))
-                ?.ProductOrders
+                    .ThenInclude(o => o.Buyer)
+                .FirstOrDefault(p => EF.Functions.Like(p.Name, productName))?
+                .ProductOrders
                 .Select(po => po.Order.Buyer)
                 .ToDictionary(
                     b => b,
@@ -63,33 +64,25 @@ namespace L5T2UnitOfWork.Services
 
         public Product GetByName(string productName)
         {
-            return  DbSet.FirstOrDefault(p => EF.Functions.Like(p.Name, productName));
+            return DbSet.FirstOrDefault(p => EF.Functions.Like(p.Name, productName));
         }
 
         public void SetName(Product product, string newName)
         {
-            if (product == null)
-            {
-                return;
-            }
+            //Задание: В одном из примеров сделайте Unit of work в транзакции
+            using (var transaction = Db.Database.BeginTransaction())
+                try
+                {
+                    product.Name = newName;
 
-            product.Name = newName;
+                    Db.SaveChanges();
 
-            Db.SaveChanges();
-        }
-
-        public void SetName(string currentName, string newName)
-        {
-            var product = GetByName(currentName);
-
-            if (product == null)
-            {
-                return;
-            }
-
-            product.Name = newName;
-
-            Db.SaveChanges();
+                    transaction.Commit();
+                }
+                catch (Exception)
+                {
+                    transaction.Rollback();
+                }
         }
     }
 }
